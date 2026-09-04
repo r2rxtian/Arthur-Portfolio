@@ -16,7 +16,7 @@ export const ContactSection: React.FC = () => {
   const handleDownloadCV = () => {
     const cvText = `=====================================================
 ${profileData.name.toUpperCase()} - ${profileData.title.toUpperCase()}
-Email: ${profileData.contact.email} | GitHub: ${profileData.contact.github}
+Email: ${profileData.contact.email} | LinkedIn: ${profileData.contact.linkedin} | GitHub: ${profileData.contact.github}
 Location: ${profileData.location} | Status: ${profileData.status}
 =====================================================
 
@@ -52,6 +52,9 @@ ${experienceData
   return (
     <section className="exec-section" id="contact">
       <div className="exec-contact-card">
+        <div className="exec-section-eyebrow" style={{ marginBottom: 4 }}>
+          <span className="exec-num-accent">05</span> // INITIATE DIALOGUE
+        </div>
         <h2 className="exec-contact-title">Let's Discuss High-Impact Opportunities</h2>
         <p className="exec-contact-desc">
           Whether you are seeking a lead engineer to build your next-generation platform, scale your distributed backend, or drive technical strategy across your teams.

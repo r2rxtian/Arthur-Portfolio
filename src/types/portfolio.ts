@@ -77,3 +77,21 @@ export interface Profile {
     meetingUrl?: string;
   };
 }
+
+export interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  issuerCode: 'AWS' | 'GCP' | 'CNCF' | 'META' | 'MONGO' | 'HASHICORP' | 'SECURITY';
+  issueDate: string;
+  expiryDate: string;
+  credentialId: string;
+  credentialUrl: string;
+  category: 'Cloud & Architecture' | 'DevOps & Containers' | 'Full-Stack & Frontend' | 'Security & Data';
+  summary: string;
+  skills: string[];
+  gradient: string;
+  accentColor: string;
+  badgeLabel?: string;
+}
+

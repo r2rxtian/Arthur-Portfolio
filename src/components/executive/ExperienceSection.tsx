@@ -1,14 +1,43 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { experienceData } from '../../data/experience';
 
+gsap.registerPlugin(ScrollTrigger);
+
 export const ExperienceSection: React.FC = () => {
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      const items = gsap.utils.toArray<HTMLElement>('.timeline-item');
+      items.forEach((item) => {
+        gsap.from(item, {
+          scrollTrigger: {
+            trigger: item,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+          },
+          opacity: 0,
+          x: -20,
+          duration: 0.55,
+          ease: 'power2.out',
+        });
+      });
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <section className="exec-section" id="experience">
+    <section ref={sectionRef} className="exec-section" id="experience">
       <div className="exec-section-header">
-        <div className="exec-section-eyebrow">Career History</div>
+        <div className="exec-section-eyebrow">
+          <span className="exec-num-accent">03</span> // LEADERSHIP & TRACK RECORD
+        </div>
         <h2 className="exec-section-title">Leadership & Track Record</h2>
         <p className="exec-section-subtitle">
-          Proven history of engineering leadership, team enablement, and shipping distributed software systems.
+          Proven history of engineering leadership, cross-functional enablement, and scaling high-velocity distributed systems.
         </p>
       </div>
 
@@ -24,7 +53,7 @@ export const ExperienceSection: React.FC = () => {
                     {exp.role}{' '}
                     <span className="timeline-company">@ {exp.company}</span>
                   </h3>
-                  <span style={{ fontSize: 13, color: '#94a3b8' }}>{exp.location}</span>
+                  <span style={{ fontSize: 13, color: '#64748b' }}>{exp.location}</span>
                 </div>
                 <span className="timeline-period">{exp.period}</span>
               </div>
@@ -46,10 +75,12 @@ export const ExperienceSection: React.FC = () => {
                     key={skill}
                     style={{
                       fontSize: 11,
-                      padding: '2px 7px',
+                      padding: '3px 8px',
                       borderRadius: 4,
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      color: '#cbd5e1',
+                      background: '#f1f5f9',
+                      color: '#475569',
+                      border: '1px solid #e2e8f0',
+                      fontWeight: 500,
                     }}
                   >
                     {skill}

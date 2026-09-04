@@ -11,6 +11,7 @@ import {
   Briefcase,
   Volume2,
   VolumeX,
+  Gamepad2,
 } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
 import { useMode } from '../../context/ModeContext';
@@ -24,6 +25,7 @@ interface WindowConfig {
 }
 
 const windowConfigs: WindowConfig[] = [
+  { id: 'adventure', label: 'Adventure.exe', icon: <Gamepad2 size={15} color="#ffd700" /> },
   { id: 'terminal', label: 'Terminal CLI', icon: <Terminal size={15} color="#2ed573" /> },
   { id: 'ide', label: 'Code Studio IDE', icon: <Code2 size={15} color="#00d2ff" /> },
   { id: 'projects', label: 'Projects Explorer', icon: <FolderGit2 size={15} color="#ffa502" /> },
@@ -116,6 +118,27 @@ export const Taskbar: React.FC = () => {
               <span style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', paddingLeft: 8 }}>
                 Programs
               </span>
+              <div
+                className="xp-menu-item"
+                style={{ background: '#fef3c7', border: '1px solid #fcd34d' }}
+                onClick={() => handleLaunchApp('adventure')}
+              >
+                <Gamepad2 size={18} color="#d97706" />
+                <span style={{ fontWeight: 700, color: '#92400e' }}>Adventure.exe (Quest)</span>
+                <span
+                  style={{
+                    marginLeft: 'auto',
+                    fontSize: 9,
+                    fontWeight: 800,
+                    background: '#f59e0b',
+                    color: '#ffffff',
+                    padding: '2px 5px',
+                    borderRadius: 3,
+                  }}
+                >
+                  NEW
+                </span>
+              </div>
               <div className="xp-menu-item" onClick={() => handleLaunchApp('terminal')}>
                 <Terminal size={18} color="#2ed573" />
                 <span>Command Prompt (CLI)</span>

@@ -10,7 +10,7 @@ export const ResumeApp: React.FC = () => {
     // Generate text blob for download
     const cvText = `=====================================================
 ${profileData.name.toUpperCase()} - ${profileData.title.toUpperCase()}
-Email: ${profileData.contact.email} | GitHub: ${profileData.contact.github}
+Email: ${profileData.contact.email} | LinkedIn: ${profileData.contact.linkedin} | GitHub: ${profileData.contact.github}
 Location: ${profileData.location} | Status: ${profileData.status}
 =====================================================
 

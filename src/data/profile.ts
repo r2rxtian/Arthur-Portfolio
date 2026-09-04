@@ -37,7 +37,7 @@ export const profileData: Profile = {
   contact: {
     email: 'arthur.engineer@example.com',
     github: 'https://github.com/r2rxtian',
-    linkedin: 'https://linkedin.com/in/arthurchristian',
+    linkedin: 'https://www.linkedin.com/in/arthur-christian-david-3974b0425',
     resumeFileName: 'Arthur_Christian_CV.pdf',
     meetingUrl: 'https://cal.com/arthur-dev',
   },

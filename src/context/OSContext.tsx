@@ -14,39 +14,49 @@ interface OSContextType {
 }
 
 const initialWindows: Record<WindowId, WindowState> = {
-  terminal: {
-    id: 'terminal',
-    title: 'Terminal — zsh (developer@portfolio)',
-    isOpen: true,
+  adventure: {
+    id: 'adventure',
+    title: 'Arthur Quest — The Project Odyssey (v1.0.exe)',
+    isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    zIndex: 10,
-    position: { x: 100, y: 55 },
-    size: { width: 680, height: 420 },
+    zIndex: 12,
+    position: { x: 200, y: 40 },
+    size: { width: 840, height: 550 },
   },
-  ide: {
-    id: 'ide',
-    title: 'Code Studio — Mock IDE',
+  projects: {
+    id: 'projects',
+    title: 'My Projects — C:\\Arthur\\Projects',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
     zIndex: 11,
-    position: { x: 160, y: 75 },
-    size: { width: 840, height: 510 },
+    position: { x: 170, y: 65 },
+    size: { width: 800, height: 490 },
   },
-  projects: {
-    id: 'projects',
-    title: 'Projects File Explorer',
+  terminal: {
+    id: 'terminal',
+    title: 'Command Prompt — zsh (developer@portfolio)',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
-    zIndex: 9,
-    position: { x: 140, y: 90 },
-    size: { width: 780, height: 480 },
+    zIndex: 10,
+    position: { x: 120, y: 80 },
+    size: { width: 680, height: 420 },
+  },
+  ide: {
+    id: 'ide',
+    title: 'Visual Studio Code — Code Studio',
+    isOpen: false,
+    isMinimized: false,
+    isMaximized: false,
+    zIndex: 10,
+    position: { x: 160, y: 75 },
+    size: { width: 840, height: 510 },
   },
   about: {
     id: 'about',
-    title: 'System Profiler — About Arthur',
+    title: 'This PC — System Properties',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -56,7 +66,7 @@ const initialWindows: Record<WindowId, WindowState> = {
   },
   resume: {
     id: 'resume',
-    title: 'Document Viewer — Arthur_CV.pdf',
+    title: 'Arthur_CV.pdf — Document Viewer',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -66,7 +76,7 @@ const initialWindows: Record<WindowId, WindowState> = {
   },
   skills: {
     id: 'skills',
-    title: 'Skills & Tech Stack Inspector',
+    title: 'CPUID CPU-Z — Tech Matrix Inspector',
     isOpen: false,
     isMinimized: false,
     isMaximized: false,
@@ -80,7 +90,7 @@ const OSContext = createContext<OSContextType | undefined>(undefined);
 
 export const OSProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [windows, setWindows] = useState<Record<WindowId, WindowState>>(initialWindows);
-  const [activeWindowId, setActiveWindowId] = useState<WindowId | null>('terminal');
+  const [activeWindowId, setActiveWindowId] = useState<WindowId | null>(null);
   const [, setTopZIndex] = useState<number>(20);
   const { sounds } = useMode();
 

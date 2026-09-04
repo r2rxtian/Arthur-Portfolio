@@ -29,7 +29,10 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({ id, title, icon, child
       dragListener={false}
       dragMomentum={false}
       dragElastic={0}
-      initial={win.position}
+      initial={{ opacity: 0, scale: 0.94, x: win.position.x, y: win.position.y + 8 }}
+      animate={{ opacity: 1, scale: 1, x: win.position.x, y: win.position.y }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
       onMouseDown={() => focusWindow(id)}
       className={`os-window ${isFocused ? 'is-focused' : ''} ${win.isMaximized ? 'is-maximized' : ''}`}
       style={{

@@ -1,55 +1,87 @@
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Cartoony & XP Typography */
-  --font-display: 'Fredoka', cursive, sans-serif;
-  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  /* Typography - Modern Technical Pairing */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-xp: 'Segoe UI', Tahoma, 'Segoe UI Historic', Arial, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
+  --font-mono-accent: 'Space Mono', 'JetBrains Mono', monospace;
 
   /* Windows XP Luna Iconic Colors */
   --xp-blue-dark: #0036ab;
   --xp-blue-main: #0055ea;
   --xp-blue-light: #3a8bfd;
   --xp-blue-highlight: #70aeff;
+  --xp-blue-bevel: #002275;
+  --xp-window-bg: #ece9d8;
+  --xp-window-header-start: #0058e6;
+  --xp-window-header-mid: #0055ea;
+  --xp-window-header-end: #0036ab;
   
   --xp-taskbar: #245edb;
   --xp-taskbar-top: #3f8cf3;
   --xp-tray-bg: #0c59b9;
   
-  --xp-start-green-1: #388e3c;
-  --xp-start-green-2: #66bb6a;
-  --xp-start-green-3: #2e7d32;
+  --xp-start-green-1: #2e7d32;
+  --xp-start-green-2: #388e3c;
+  --xp-start-green-3: #43a047;
 
   --xp-btn-close: #e81123;
   --xp-btn-close-hover: #f03a47;
   --xp-btn-min-max: #2270ff;
   --xp-btn-hover: #4588ff;
 
-  /* Cartoony Vibrant Accents */
-  --cartoon-yellow: #ffcf24;
-  --cartoon-orange: #ff7a00;
-  --cartoon-pink: #ff5299;
-  --cartoon-purple: #8338ec;
-  --cartoon-cyan: #00d2ff;
-  --cartoon-green: #38b000;
-  --cartoon-ink: #192038;
-  --cartoon-ink-light: #2d3748;
+  /* Windows XP Elevation & Gel Shadows */
+  --shadow-xp-window: 0 12px 36px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
+  --shadow-xp-window-focused: 0 18px 48px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.25);
+  --shadow-xp-menu: 0 10px 30px rgba(0, 0, 0, 0.38), 0 3px 8px rgba(0, 0, 0, 0.22);
+  --shadow-xp-btn: inset 0 1px 0 rgba(255, 255, 255, 0.5), inset 0 -1px 0 rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.3);
 
-  /* Bliss Wallpaper Palettes */
-  --bliss-sky-top: #2980b9;
-  --bliss-sky-mid: #6dd5fa;
-  --bliss-sky-bottom: #bbf2f6;
-  --bliss-hill-front: #48bb78;
-  --bliss-hill-mid: #38a169;
-  --bliss-hill-back: #2f855a;
+  /* Bliss Wallpaper Palettes (Atmospheric & Realistic) */
+  --bliss-sky-top: #1b6ca8;
+  --bliss-sky-mid: #5cb8f0;
+  --bliss-sky-bottom: #aee0fb;
+  --bliss-hill-front: #3da135;
+  --bliss-hill-mid: #2f8e28;
+  --bliss-hill-back: #257422;
 
-  /* Cartoony Shadows */
-  --shadow-cartoon-sm: 2px 2px 0px var(--cartoon-ink);
-  --shadow-cartoon-md: 4px 4px 0px var(--cartoon-ink);
-  --shadow-cartoon-lg: 6px 6px 0px var(--cartoon-ink);
-  --shadow-cartoon-window: 6px 6px 0px rgba(0, 0, 0, 0.4), 0 10px 25px rgba(0, 0, 0, 0.2);
+  /* Professional Executive Design System (Sleek Dark Mode) */
+  --exec-bg: #080c14;
+  --exec-surface: #0d1527;
+  --exec-card-bg: rgba(13, 21, 39, 0.72);
+  --exec-card-border: rgba(56, 189, 248, 0.12);
+  --exec-card-border-hover: rgba(56, 189, 248, 0.38);
+  --exec-text-primary: #f8fafc;
+  --exec-text-secondary: #94a3b8;
+  --exec-text-muted: #64748b;
+  --exec-accent-cyan: #38bdf8;
+  --exec-accent-blue: #0284c7;
+  --exec-accent-indigo: #4f46e5;
+  --exec-accent-emerald: #10b981;
+  --exec-accent-violet: #8b5cf6;
+
+  --shadow-exec-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px -1px rgba(0, 0, 0, 0.3);
+  --shadow-exec-md: 0 4px 16px -2px rgba(0, 0, 0, 0.5), 0 2px 6px -2px rgba(0, 0, 0, 0.4);
+  --shadow-exec-lg: 0 12px 32px -4px rgba(0, 0, 0, 0.6), 0 4px 12px -4px rgba(56, 189, 248, 0.08);
+  --shadow-exec-xl: 0 20px 48px -8px rgba(0, 0, 0, 0.75), 0 8px 24px -6px rgba(56, 189, 248, 0.12);
+
+  /* Backward Compatibility & Fallback Aliases (Sanitized) */
+  --cartoon-ink: #1e293b;
+  --cartoon-ink-light: #475569;
+  --cartoon-yellow: #f59e0b;
+  --cartoon-orange: #ea580c;
+  --cartoon-pink: #ec4899;
+  --cartoon-purple: #7c3aed;
+  --cartoon-cyan: #0284c7;
+  --cartoon-green: #10b981;
+  --shadow-cartoon-sm: var(--shadow-exec-sm);
+  --shadow-cartoon-md: var(--shadow-exec-md);
+  --shadow-cartoon-lg: var(--shadow-exec-lg);
+  --shadow-cartoon-window: var(--shadow-xp-window);
 
   /* Transitions */
-  --transition-fast: 120ms ease;
-  --transition-bouncy: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 150ms cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 250ms cubic-bezier(0.16, 1, 0.3, 1);
 }
+

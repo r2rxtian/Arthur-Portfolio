@@ -1,11 +1,12 @@
 import React from 'react';
 import { HeroSection } from './HeroSection';
-import { CaseStudiesSection } from './CaseStudiesSection';
+import { WorkSection } from './WorkSection';
+import { CertificatesSection } from './CertificatesSection';
 import { ExperienceSection } from './ExperienceSection';
 import { SkillsSection } from './SkillsSection';
 import { ContactSection } from './ContactSection';
 import { profileData } from '../../data/profile';
-import { Calendar } from 'lucide-react';
+import { Mail } from 'lucide-react';
 
 export const ExecutiveLayout: React.FC = () => {
   return (
@@ -24,8 +25,11 @@ export const ExecutiveLayout: React.FC = () => {
             <a href="#overview" className="exec-nav-link">
               Overview
             </a>
-            <a href="#case-studies" className="exec-nav-link">
-              Case Studies
+            <a href="#work" className="exec-nav-link">
+              Work
+            </a>
+            <a href="#certificates" className="exec-nav-link">
+              Certificates
             </a>
             <a href="#experience" className="exec-nav-link">
               Experience
@@ -33,19 +37,14 @@ export const ExecutiveLayout: React.FC = () => {
             <a href="#skills" className="exec-nav-link">
               Skills
             </a>
-            <a href="#contact" className="exec-nav-link">
-              Contact
-            </a>
           </nav>
 
           <a
-            href={profileData.contact.meetingUrl}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="#contact"
             className="exec-nav-cta"
           >
-            <Calendar size={14} />
-            <span>Book Intro</span>
+            <Mail size={14} />
+            <span>Contact</span>
           </a>
         </div>
       </header>
@@ -53,7 +52,8 @@ export const ExecutiveLayout: React.FC = () => {
       {/* Page Body */}
       <main className="exec-content">
         <HeroSection />
-        <CaseStudiesSection />
+        <WorkSection />
+        <CertificatesSection />
         <ExperienceSection />
         <SkillsSection />
         <ContactSection />

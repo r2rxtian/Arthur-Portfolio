@@ -5,6 +5,7 @@ import { OSProvider } from './context/OSContext';
 import { Desktop } from './components/technical/Desktop';
 import { ExecutiveLayout } from './components/executive/ExecutiveLayout';
 import { PerspectiveToggle } from './components/common/PerspectiveToggle';
+import { CustomCursor } from './components/common/CustomCursor';
 import './styles/global.css';
 
 const PortfolioContent: React.FC = () => {
@@ -12,6 +13,9 @@ const PortfolioContent: React.FC = () => {
 
   return (
     <>
+      {/* Animated Custom Reticle Cursor */}
+      <CustomCursor />
+
       <AnimatePresence mode="wait">
         {mode === 'technical' ? (
           <motion.div

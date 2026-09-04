@@ -16,23 +16,19 @@ export const AboutApp: React.FC = () => {
           border: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
-        <div
+        <img
+          src="/profile.png"
+          alt={profileData.name}
           style={{
             width: 72,
             height: 72,
             borderRadius: '50%',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 26,
-            fontWeight: 800,
-            color: '#fff',
+            objectFit: 'cover',
+            objectPosition: 'center 20%',
+            border: '2px solid #38bdf8',
             boxShadow: '0 8px 24px rgba(14, 165, 233, 0.3)',
           }}
-        >
-          AC
-        </div>
+        />
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
           <h2 style={{ fontSize: 20, fontWeight: 700, color: '#f8fafc' }}>

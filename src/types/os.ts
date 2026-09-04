@@ -1,4 +1,4 @@
-export type WindowId = 'terminal' | 'ide' | 'projects' | 'about' | 'resume' | 'skills';
+export type WindowId = 'terminal' | 'ide' | 'projects' | 'about' | 'resume' | 'skills' | 'adventure';
 
 export interface WindowState {
   id: WindowId;

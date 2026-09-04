@@ -7,12 +7,12 @@ import { projectsData } from '../../data/projects';
 
 gsap.registerPlugin(ScrollTrigger);
 
-export const CaseStudiesSection: React.FC = () => {
+export const WorkSection: React.FC = () => {
   const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      const cards = gsap.utils.toArray<HTMLElement>('.case-study-card');
+      const cards = gsap.utils.toArray<HTMLElement>('.work-card');
       cards.forEach((card) => {
         gsap.from(card, {
           scrollTrigger: {
@@ -32,61 +32,61 @@ export const CaseStudiesSection: React.FC = () => {
   }, []);
 
   return (
-    <section ref={sectionRef} className="exec-section" id="case-studies">
+    <section ref={sectionRef} className="exec-section" id="work">
       <div className="exec-section-header">
         <div className="exec-section-eyebrow">
-          <span className="exec-num-accent">01</span> // PRODUCTION CASE STUDIES
+          <span className="exec-num-accent">01</span> // PRODUCTION WORK
         </div>
-        <h2 className="exec-section-title">Architectural Case Studies</h2>
+        <h2 className="exec-section-title">Featured Work & Systems</h2>
         <p className="exec-section-subtitle">
           Mission-critical production systems engineered to resolve throughput bottlenecks, eliminate latency spikes, and drive measurable enterprise value.
         </p>
       </div>
 
-      <div className="case-studies-list">
+      <div className="work-list">
         {projectsData.map((project) => (
-          <div key={project.id} className="case-study-card">
+          <div key={project.id} className="work-card">
             <div
-              className="case-study-banner"
+              className="work-banner"
               style={{ background: project.thumbnailGradient }}
             />
 
-            <div className="case-study-inner">
+            <div className="work-inner">
               {/* Left Column: Context & Solution */}
-              <div className="case-study-left">
-                <div className="case-study-meta">
-                  <span className="case-study-category">{project.category}</span>
-                  <span className="case-study-role">{project.executive.role}</span>
+              <div className="work-left">
+                <div className="work-meta">
+                  <span className="work-category">{project.category}</span>
+                  <span className="work-role">{project.executive.role}</span>
                 </div>
 
-                <h3 className="case-study-title">{project.title}</h3>
-                <p className="case-study-tagline">{project.tagline}</p>
+                <h3 className="work-title">{project.title}</h3>
+                <p className="work-tagline">{project.tagline}</p>
 
-                <div className="case-study-block">
-                  <span className="case-study-block-title">The Business Challenge</span>
-                  <p className="case-study-block-desc">
+                <div className="work-block">
+                  <span className="work-block-title">The Business Challenge</span>
+                  <p className="work-block-desc">
                     {project.executive.businessChallenge}
                   </p>
                 </div>
 
-                <div className="case-study-block">
-                  <span className="case-study-block-title">Strategic Solution</span>
-                  <p className="case-study-block-desc">
+                <div className="work-block">
+                  <span className="work-block-title">Strategic Solution</span>
+                  <p className="work-block-desc">
                     {project.executive.strategicSolution}
                   </p>
                 </div>
               </div>
 
               {/* Right Column: Measurable Impact & Tech */}
-              <div className="case-study-right">
+              <div className="work-right">
                 <div>
-                  <span className="case-study-block-title" style={{ display: 'block', marginBottom: 12 }}>
+                  <span className="work-block-title" style={{ display: 'block', marginBottom: 12 }}>
                     Quantifiable Business Impact
                   </span>
-                  <ul className="impact-list">
+                  <ul className="work-impact-list">
                     {project.executive.quantifiableImpact.map((impact, idx) => (
-                      <li key={idx} className="impact-item">
-                        <CheckCircle size={16} className="impact-icon" />
+                      <li key={idx} className="work-impact-item">
+                        <CheckCircle size={16} className="work-impact-icon" />
                         <span>{impact}</span>
                       </li>
                     ))}
@@ -95,27 +95,27 @@ export const CaseStudiesSection: React.FC = () => {
 
                 <div>
                   <span
-                    className="case-study-block-title"
+                    className="work-block-title"
                     style={{ display: 'block', marginBottom: 8 }}
                   >
                     Architecture & Tech Stack
                   </span>
-                  <div className="case-study-tech-wrap">
+                  <div className="work-tech-wrap">
                     {project.technical.techStack.map((tech) => (
-                      <span key={tech} className="case-study-tech-pill">
+                      <span key={tech} className="work-tech-pill">
                         {tech}
                       </span>
                     ))}
                   </div>
                 </div>
 
-                <div className="case-study-links">
+                <div className="work-links">
                   {project.links.demo && (
                     <a
                       href={project.links.demo}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="case-study-link-btn"
+                      className="work-link-btn"
                     >
                       <span>Live Deployment</span>
                       <ArrowUpRight size={15} />
@@ -127,7 +127,7 @@ export const CaseStudiesSection: React.FC = () => {
                       href={project.links.github}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="case-study-link-btn"
+                      className="work-link-btn"
                       style={{ color: '#64748b' }}
                     >
                       <GithubIcon size={15} />
