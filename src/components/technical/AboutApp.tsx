@@ -90,7 +90,7 @@ export const AboutApp: React.FC = () => {
             Experience in Production
           </span>
           <span style={{ fontSize: 13, fontWeight: 600, color: '#f1f5f9' }}>
-            {profileData.yearsOfExperience} High-Scale Architecture
+            Full-Stack Software Engineering
           </span>
         </div>
 

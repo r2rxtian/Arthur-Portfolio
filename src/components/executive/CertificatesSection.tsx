@@ -97,7 +97,7 @@ export const CertificatesSection: React.FC = () => {
         </div>
         <h2 className="exec-section-title">Verified Technical Certifications</h2>
         <p className="exec-section-subtitle">
-          Industry-recognized professional credentials validating distributed systems architecture, cloud infrastructure, container orchestration, and full-stack engineering standards.
+          Industry-recognized professional credentials validating scalable systems, cloud infrastructure, container orchestration, and full-stack engineering standards.
         </p>
       </div>
 

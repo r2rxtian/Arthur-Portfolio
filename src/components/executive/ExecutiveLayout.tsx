@@ -18,7 +18,7 @@ export const ExecutiveLayout: React.FC = () => {
         <div className="exec-nav-inner">
           <a href="#overview" className="exec-logo">
             <span>{profileData.name}</span>
-            <span className="exec-logo-badge">ARCHITECT</span>
+            <span className="exec-logo-badge">ENGINEER</span>
           </a>
 
           <nav className="exec-nav-links">

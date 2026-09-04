@@ -98,7 +98,7 @@ export const WorkSection: React.FC = () => {
                     className="work-block-title"
                     style={{ display: 'block', marginBottom: 8 }}
                   >
-                    Architecture & Tech Stack
+                    Engineering & Tech Stack
                   </span>
                   <div className="work-tech-wrap">
                     {project.technical.techStack.map((tech) => (

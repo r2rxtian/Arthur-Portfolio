@@ -2,16 +2,16 @@ import React from 'react';
 import { Sparkles } from 'lucide-react';
 
 const items = [
-  'Distributed Systems Architecture',
-  'Real-Time Event Streaming',
-  'Rust & Go Core Services',
-  'Agentic AI & LLM Systems',
-  'Apache Kafka & Redis Clusters',
-  'TypeScript & React 19',
-  'Zero-Trust Biometric Security',
-  'Cloud Infrastructure & eBPF',
-  'Sub-Millisecond Edge Proxies',
-  'High-Throughput Analytics',
+  'Full-Stack Web Development',
+  'Scalable System Design',
+  'AI Integration & Automation',
+  'Cloud Technologies & DevOps',
+  'TypeScript & React',
+  'Node.js & Express APIs',
+  'Microsoft SQL Server & T-SQL',
+  'User-Focused Digital Experiences',
+  'Audited Enterprise Systems',
+  'Practical Problem Solving',
 ];
 
 export const TechMarquee: React.FC = () => {

@@ -22,10 +22,8 @@ export const ProjectsFolderApp: React.FC = () => {
 
   const categories = [
     'All',
-    'Systems & Cloud',
-    'AI & Data',
-    'Frontend Engineering',
     'Full-Stack',
+    'Systems & Cloud',
   ];
 
   const filteredProjects = projectsData.filter((project) => {
@@ -160,7 +158,7 @@ export const ProjectsFolderApp: React.FC = () => {
               </div>
               <h3 className="xp-banner-title">Adventure.exe — The Project Odyssey</h3>
               <p className="xp-banner-desc">
-                Wander through retro 2D pixel-art shrines to discover Arthur's projects, inspect live architecture specs, and unlock completion badges.
+                Wander through retro 2D pixel-art shrines to discover Arthur's projects, inspect live software specs, and unlock completion badges.
               </p>
             </div>
             <button

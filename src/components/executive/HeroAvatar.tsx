@@ -76,8 +76,8 @@ export const HeroAvatar: React.FC = () => {
             <Award size={15} color="#38bdf8" />
           </div>
           <div>
-            <div className="exec-badge-title">Staff Systems Architect</div>
-            <div className="exec-badge-sub">Distributed Systems & AI</div>
+            <div className="exec-badge-title">Full-Stack Software Engineer</div>
+            <div className="exec-badge-sub">Practical & Scalable Solutions</div>
           </div>
         </div>
 

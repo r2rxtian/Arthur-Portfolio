@@ -14,7 +14,7 @@ import { useOS } from '../../../context/OSContext';
 import { useMode } from '../../../context/ModeContext';
 import { AdventureGameEngine } from './gameEngine';
 import type { ShrineMilestone } from './gameData';
-import { getProjectForShrine } from './gameData';
+import { shrinesData, getProjectForShrine } from './gameData';
 
 export const AdventureGameApp: React.FC = () => {
   const { openWindow } = useOS();
@@ -97,7 +97,7 @@ export const AdventureGameApp: React.FC = () => {
             <Award size={14} color="#38bdf8" />
             <span>Artifacts Unlocked:</span>
             <span className="adv-tracker-count">
-              {discoveredIds.filter((id) => id.startsWith('shrine-')).length} / 4
+              {discoveredIds.filter((id) => id.startsWith('shrine-')).length} / {shrinesData.filter((s) => s.id.startsWith('shrine-')).length}
             </span>
           </div>
         </div>
@@ -305,9 +305,9 @@ export const AdventureGameApp: React.FC = () => {
             ) : (
               <div className="adv-project-body">
                 <p style={{ fontSize: 13.5, color: '#e2e8f0', lineHeight: 1.6 }}>
-                  Congratulations, traveler! You have navigated Arthur's architectural domain and
-                  unlocked all 4 milestone artifacts. Ready to connect and scale your engineering
-                  platform?
+                  Congratulations, traveler! You have navigated Arthur's software engineering domain and
+                  unlocked all 5 milestone projects. Ready to connect and build practical, scalable
+                  digital experiences together?
                 </p>
 
                 <div className="adv-modal-actions" style={{ marginTop: 18 }}>

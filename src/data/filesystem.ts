@@ -8,12 +8,12 @@ export const virtualFileSystem: VirtualFile[] = [
     path: '/README.md',
     type: 'file',
     language: 'markdown',
-    content: `# Arthur Christian — Systems & Full-Stack Architect
+    content: `# Arthur Christian — Full-Stack Software Engineer
 > Dual-mode engineering portfolio. Built with TypeScript, React 19, and Vite.
 
 ## Overview
-- **Specialization**: Distributed systems, real-time event streaming, and high-performance Web applications.
-- **Philosophy**: Build software that is resilient under stress, delightful to use, and measurably impacts the business.
+- **Specialization**: Full-stack web development, scalable systems, AI integration, automation, and cloud technologies.
+- **Philosophy**: Turning ideas into functional digital experiences through practical, scalable solutions.
 - **Modes**:
   - **Technical Mode**: Interactive OS desktop simulation, terminal CLI, and embedded code IDE.
   - **Executive Mode**: Curated case studies with business problems, strategic solutions, and impact metrics.
@@ -103,20 +103,26 @@ ${project.technical.codeSnippet.code}
         type: 'file',
         language: 'text',
         content: `=====================================================
-ARTHUR CHRISTIAN - SENIOR FULL-STACK & SYSTEMS ARCHITECT
+ARTHUR CHRISTIAN - FULL-STACK SOFTWARE ENGINEER
 Email: arthur.engineer@example.com | GitHub: github.com/r2rxtian
-Location: Remote / Global | Status: Available for High-Impact Roles
+Location: Remote / Global | Status: Available for Software Engineering Roles
 =====================================================
 
-CORE COMPETENCIES:
-- Distributed Systems, Microservices, Cloud Architecture (AWS, Docker, K8s)
-- TypeScript, React 19, Node.js, Go (Golang), Python, PostgreSQL, Redis, Kafka
-- Real-time WebSockets, Web Performance Optimization, Zero-Trust Passkeys
+ABOUT:
+BS Computer Science graduate passionate about designing and developing practical, scalable solutions — combining full-stack development, AI integration, automation, cloud technologies, and user-focused system design.
 
-EXPERIENCE SUMMARY:
-- Lead Systems & Full-Stack Architect @ Apex Cloud (2023 - Present)
-  * Slashed infrastructure spend by $180k/yr via Go/TypeScript microservices.
-  * Cut deployment turnaround from 45 min to <3 min with internal developer platform.
+CORE COMPETENCIES:
+- Full-Stack Web Development, REST APIs, Microservices, Cloud Technologies
+- TypeScript, JavaScript, React 19, Node.js, Express, PHP 8.2
+- Microsoft SQL Server, PostgreSQL, Redis, Database Optimization
+- Automation, AI Integration, Docker, CI/CD, System Design
+
+PROJECTS & WORK:
+- StockHub Inventory Management System (ITMS) - Full-Stack TypeScript & MSSQL
+- Lost & Found Management System - Full-Stack Express, MSSQL & Matching Engine
+- Tennis Academy LMS - Full-Stack Learning Management Platform
+- DocHubPR - Secure Document Lifecycle Management Hub
+- QR Task Check (QRS) - Field Operations & Verification Platform
 - Senior Full-Stack Engineer @ Veloce Data Systems (2021 - 2023)
   * Engineered 120k tick/sec WebSocket telemetry stream for fintech trading desks.
 - Software Engineer @ Synthetix Interactive (2019 - 2021)

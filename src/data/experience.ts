@@ -3,13 +3,13 @@ import type { Experience } from '../types/portfolio';
 export const experienceData: Experience[] = [
   {
     id: 'exp-1',
-    role: 'Lead Systems & Full-Stack Architect',
+    role: 'Lead Full-Stack Software Engineer',
     company: 'Apex Cloud Technologies',
     location: 'Remote / San Francisco, CA',
     period: '2023 - Present',
     type: 'Full-time',
     summary:
-      'Directing core architecture and cloud reliability initiatives across 6 cross-functional engineering squads delivering high-concurrency SaaS infrastructure.',
+      'Spearheading scalable full-stack applications, cloud reliability initiatives, and automated service pipelines delivering high-concurrency solutions.',
     highlights: [
       'Led migration of monolithic Ruby/Node services into decoupled Go/TypeScript microservices, slashing cloud infrastructure costs by $180k/yr.',
       'Designed and rolled out internal developer platform (IDP) reducing staging deployment lead time from 45 minutes to under 3 minutes.',

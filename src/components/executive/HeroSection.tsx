@@ -108,7 +108,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           <h1 className="exec-hero-title">
-            Architecting <span className="exec-gradient-text">high-throughput systems</span> and product-focused web platforms.
+            Turning ideas into <span className="exec-gradient-text">functional digital experiences</span>.
           </h1>
 
           <p className="exec-hero-pitch">

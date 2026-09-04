@@ -32,7 +32,7 @@ export const executeTerminalCommand = (
         output: `Available CLI Commands:
   help               - Display this help manual
   whoami             - Print current engineer bio and system role
-  projects           - List featured software projects & architectures
+  projects           - List featured software projects & tech stacks
   skills             - Print technical skills and competencies matrix
   experience         - Print career history and measurable accomplishments
   contact            - View email, GitHub, LinkedIn, and scheduling links
