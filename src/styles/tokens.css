@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Universal Accents */
+  --accent-cyan: #06b6d4;
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-emerald: #10b981;
+  --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
+
+  /* Traffic lights */
+  --traffic-close: #ff5f56;
+  --traffic-minimize: #ffbd2e;
+  --traffic-maximize: #27c93f;
+
+  /* Technical Mode Theme (Desktop OS Simulation) */
+  --os-bg: #0b0f19;
+  --os-surface: rgba(15, 23, 42, 0.75);
+  --os-surface-hover: rgba(30, 41, 59, 0.85);
+  --os-surface-active: rgba(51, 65, 85, 0.9);
+  --os-border: rgba(148, 163, 184, 0.15);
+  --os-border-bright: rgba(56, 189, 248, 0.35);
+  --os-text-primary: #f8fafc;
+  --os-text-secondary: #94a3b8;
+  --os-text-muted: #64748b;
+  --os-dock-bg: rgba(15, 23, 42, 0.65);
+  --os-window-header: rgba(15, 23, 42, 0.9);
+  --os-glow: 0 0 24px rgba(56, 189, 248, 0.15);
+
+  /* Executive Mode Theme (Recruiter / Case Study) */
+  --exec-bg: #090d16;
+  --exec-surface: rgba(18, 24, 38, 0.85);
+  --exec-surface-card: #0f172a;
+  --exec-surface-card-hover: #1e293b;
+  --exec-border: rgba(255, 255, 255, 0.08);
+  --exec-border-hover: rgba(56, 189, 248, 0.3);
+  --exec-text-primary: #f8fafc;
+  --exec-text-secondary: #cbd5e1;
+  --exec-text-muted: #94a3b8;
+  --exec-highlight: #38bdf8;
+  --exec-badge-bg: rgba(56, 189, 248, 0.12);
+  --exec-badge-text: #38bdf8;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+  --shadow-window: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-spring: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
