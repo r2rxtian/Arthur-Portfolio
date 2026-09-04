@@ -1,59 +1,55 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* Typography */
-  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  /* Cartoony & XP Typography */
+  --font-display: 'Fredoka', cursive, sans-serif;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
-  /* Universal Accents */
-  --accent-cyan: #06b6d4;
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  --accent-emerald: #10b981;
-  --accent-amber: #f59e0b;
-  --accent-rose: #f43f5e;
+  /* Windows XP Luna Iconic Colors */
+  --xp-blue-dark: #0036ab;
+  --xp-blue-main: #0055ea;
+  --xp-blue-light: #3a8bfd;
+  --xp-blue-highlight: #70aeff;
+  
+  --xp-taskbar: #245edb;
+  --xp-taskbar-top: #3f8cf3;
+  --xp-tray-bg: #0c59b9;
+  
+  --xp-start-green-1: #388e3c;
+  --xp-start-green-2: #66bb6a;
+  --xp-start-green-3: #2e7d32;
 
-  /* Traffic lights */
-  --traffic-close: #ff5f56;
-  --traffic-minimize: #ffbd2e;
-  --traffic-maximize: #27c93f;
+  --xp-btn-close: #e81123;
+  --xp-btn-close-hover: #f03a47;
+  --xp-btn-min-max: #2270ff;
+  --xp-btn-hover: #4588ff;
 
-  /* Technical Mode Theme (Desktop OS Simulation) */
-  --os-bg: #0b0f19;
-  --os-surface: rgba(15, 23, 42, 0.75);
-  --os-surface-hover: rgba(30, 41, 59, 0.85);
-  --os-surface-active: rgba(51, 65, 85, 0.9);
-  --os-border: rgba(148, 163, 184, 0.15);
-  --os-border-bright: rgba(56, 189, 248, 0.35);
-  --os-text-primary: #f8fafc;
-  --os-text-secondary: #94a3b8;
-  --os-text-muted: #64748b;
-  --os-dock-bg: rgba(15, 23, 42, 0.65);
-  --os-window-header: rgba(15, 23, 42, 0.9);
-  --os-glow: 0 0 24px rgba(56, 189, 248, 0.15);
+  /* Cartoony Vibrant Accents */
+  --cartoon-yellow: #ffcf24;
+  --cartoon-orange: #ff7a00;
+  --cartoon-pink: #ff5299;
+  --cartoon-purple: #8338ec;
+  --cartoon-cyan: #00d2ff;
+  --cartoon-green: #38b000;
+  --cartoon-ink: #192038;
+  --cartoon-ink-light: #2d3748;
 
-  /* Executive Mode Theme (Recruiter / Case Study) */
-  --exec-bg: #090d16;
-  --exec-surface: rgba(18, 24, 38, 0.85);
-  --exec-surface-card: #0f172a;
-  --exec-surface-card-hover: #1e293b;
-  --exec-border: rgba(255, 255, 255, 0.08);
-  --exec-border-hover: rgba(56, 189, 248, 0.3);
-  --exec-text-primary: #f8fafc;
-  --exec-text-secondary: #cbd5e1;
-  --exec-text-muted: #94a3b8;
-  --exec-highlight: #38bdf8;
-  --exec-badge-bg: rgba(56, 189, 248, 0.12);
-  --exec-badge-text: #38bdf8;
+  /* Bliss Wallpaper Palettes */
+  --bliss-sky-top: #2980b9;
+  --bliss-sky-mid: #6dd5fa;
+  --bliss-sky-bottom: #bbf2f6;
+  --bliss-hill-front: #48bb78;
+  --bliss-hill-mid: #38a169;
+  --bliss-hill-back: #2f855a;
 
-  /* Shadows */
-  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
-  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
-  --shadow-window: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  /* Cartoony Shadows */
+  --shadow-cartoon-sm: 2px 2px 0px var(--cartoon-ink);
+  --shadow-cartoon-md: 4px 4px 0px var(--cartoon-ink);
+  --shadow-cartoon-lg: 6px 6px 0px var(--cartoon-ink);
+  --shadow-cartoon-window: 6px 6px 0px rgba(0, 0, 0, 0.4), 0 10px 25px rgba(0, 0, 0, 0.2);
 
   /* Transitions */
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-spring: 400ms cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --transition-fast: 120ms ease;
+  --transition-bouncy: 300ms cubic-bezier(0.34, 1.56, 0.64, 1);
 }

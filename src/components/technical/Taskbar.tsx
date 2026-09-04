@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Terminal,
   Code2,
@@ -8,32 +7,37 @@ import {
   UserCheck,
   FileText,
   Clock,
-  Wifi,
-  BatteryCharging,
   Sparkles,
+  Briefcase,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
+import { useMode } from '../../context/ModeContext';
 import type { WindowId } from '../../types/os';
 import { profileData } from '../../data/profile';
 
-interface DockItemConfig {
+interface WindowConfig {
   id: WindowId;
   label: string;
   icon: React.ReactNode;
 }
 
-const dockItems: DockItemConfig[] = [
-  { id: 'terminal', label: 'Terminal CLI', icon: <Terminal size={22} color="#38bdf8" /> },
-  { id: 'ide', label: 'Code Studio IDE', icon: <Code2 size={22} color="#818cf8" /> },
-  { id: 'projects', label: 'Projects Explorer', icon: <FolderGit2 size={22} color="#34d399" /> },
-  { id: 'skills', label: 'Tech Stack Matrix', icon: <Cpu size={22} color="#f59e0b" /> },
-  { id: 'about', label: 'System Profiler', icon: <UserCheck size={22} color="#ec4899" /> },
-  { id: 'resume', label: 'CV Viewer', icon: <FileText size={22} color="#cbd5e1" /> },
+const windowConfigs: WindowConfig[] = [
+  { id: 'terminal', label: 'Terminal CLI', icon: <Terminal size={15} color="#2ed573" /> },
+  { id: 'ide', label: 'Code Studio IDE', icon: <Code2 size={15} color="#00d2ff" /> },
+  { id: 'projects', label: 'Projects Explorer', icon: <FolderGit2 size={15} color="#ffa502" /> },
+  { id: 'skills', label: 'Tech Stack Matrix', icon: <Cpu size={15} color="#ff5299" /> },
+  { id: 'about', label: 'System Profiler', icon: <UserCheck size={15} color="#8338ec" /> },
+  { id: 'resume', label: 'Arthur_CV.pdf', icon: <FileText size={15} color="#0055ea" /> },
 ];
 
 export const Taskbar: React.FC = () => {
-  const { windows, activeWindowId, openWindow, focusWindow } = useOS();
+  const { windows, activeWindowId, openWindow, focusWindow, minimizeWindow } = useOS();
+  const { setMode, soundEnabled, toggleSound, sounds } = useMode();
+  const [startMenuOpen, setStartMenuOpen] = useState<boolean>(false);
   const [time, setTime] = useState<string>('');
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const updateTime = () => {
@@ -47,73 +51,193 @@ export const Taskbar: React.FC = () => {
     return () => clearInterval(interval);
   }, []);
 
-  const activeWin = activeWindowId ? windows[activeWindowId] : null;
+  // Close start menu when clicking outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        const startBtn = document.querySelector('.xp-start-btn');
+        if (startBtn && startBtn.contains(e.target as Node)) return;
+        setStartMenuOpen(false);
+      }
+    };
+    if (startMenuOpen) {
+      window.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => window.removeEventListener('mousedown', handleOutsideClick);
+  }, [startMenuOpen]);
 
-  const handleDockClick = (id: WindowId) => {
+  const handleStartToggle = () => {
+    sounds.playClick();
+    setStartMenuOpen((prev) => !prev);
+  };
+
+  const handleTaskClick = (id: WindowId) => {
+    sounds.playClick();
     const win = windows[id];
-    if (win.isOpen && !win.isMinimized) {
-      focusWindow(id);
+    if (win.isOpen) {
+      if (win.isMinimized) {
+        openWindow(id);
+      } else if (activeWindowId === id) {
+        minimizeWindow(id);
+      } else {
+        focusWindow(id);
+      }
     } else {
       openWindow(id);
     }
   };
 
+  const handleLaunchApp = (id: WindowId) => {
+    sounds.playClick();
+    setStartMenuOpen(false);
+    openWindow(id);
+  };
+
   return (
     <>
-      {/* Top Menu / Status Bar */}
-      <div className="os-topbar">
-        <div className="os-topbar-left">
-          <div className="os-brand">
-            <Sparkles size={14} className="os-brand-icon" />
-            <span>ArthurOS v2.4</span>
+      {/* Windows XP Start Menu */}
+      {startMenuOpen && (
+        <div ref={menuRef} className="xp-start-menu">
+          {/* Header */}
+          <div className="xp-menu-header">
+            <div className="xp-menu-avatar">AC</div>
+            <div>
+              <div className="xp-menu-name">{profileData.name}</div>
+              <div style={{ fontSize: 11.5, color: '#e0f2fe', fontWeight: 600 }}>
+                {profileData.title}
+              </div>
+            </div>
           </div>
 
-          {activeWin && activeWin.isOpen && (
-            <span className="os-active-window-title">
-              {activeWin.title}
-            </span>
-          )}
-        </div>
+          {/* Dual-column body */}
+          <div className="xp-menu-body">
+            {/* Left Column: Pinned Programs */}
+            <div className="xp-menu-left">
+              <span style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', paddingLeft: 8 }}>
+                Programs
+              </span>
+              <div className="xp-menu-item" onClick={() => handleLaunchApp('terminal')}>
+                <Terminal size={18} color="#2ed573" />
+                <span>Command Prompt (CLI)</span>
+              </div>
+              <div className="xp-menu-item" onClick={() => handleLaunchApp('ide')}>
+                <Code2 size={18} color="#00d2ff" />
+                <span>Code Studio IDE</span>
+              </div>
+              <div className="xp-menu-item" onClick={() => handleLaunchApp('projects')}>
+                <FolderGit2 size={18} color="#ffa502" />
+                <span>My Projects</span>
+              </div>
+              <div className="xp-menu-item" onClick={() => handleLaunchApp('skills')}>
+                <Cpu size={18} color="#ff5299" />
+                <span>Tech Stack Matrix</span>
+              </div>
+              <div className="xp-menu-item" onClick={() => handleLaunchApp('resume')}>
+                <FileText size={18} color="#0055ea" />
+                <span>Curriculum Vitae</span>
+              </div>
+            </div>
 
-        <div className="os-topbar-right">
-          <div className="os-pill-badge">
-            <span className="os-pulse-dot" />
-            <span>{profileData.availability}</span>
+            {/* Right Column: Places & Settings */}
+            <div className="xp-menu-right">
+              <span style={{ fontSize: 11, fontWeight: 800, color: '#1e3a8a', textTransform: 'uppercase', paddingLeft: 8 }}>
+                System & Info
+              </span>
+              <div className="xp-menu-item" onClick={() => handleLaunchApp('about')}>
+                <UserCheck size={16} color="#0036ab" />
+                <span>System Profiler</span>
+              </div>
+              <div
+                className="xp-menu-item"
+                onClick={() => {
+                  toggleSound();
+                  sounds.playClick();
+                }}
+              >
+                {soundEnabled ? <Volume2 size={16} color="#0036ab" /> : <VolumeX size={16} color="#0036ab" />}
+                <span>Sound: {soundEnabled ? 'ON' : 'OFF'}</span>
+              </div>
+              <div
+                className="xp-menu-item"
+                onClick={() => {
+                  setStartMenuOpen(false);
+                  setMode('executive');
+                }}
+                style={{ marginTop: 'auto', background: '#ffcf24', border: '1.5px solid #192038', color: '#192038' }}
+              >
+                <Briefcase size={16} color="#192038" />
+                <span>Executive View</span>
+              </div>
+            </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <Wifi size={13} color="#94a3b8" />
-            <BatteryCharging size={14} color="#10b981" />
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 5, color: '#f1f5f9' }}>
-            <Clock size={12} />
-            <span>{time}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Floating Dock */}
-      <div className="os-dock-container">
-        {dockItems.map((item) => {
-          const win = windows[item.id];
-          const isOpen = win && win.isOpen;
-
-          return (
-            <motion.button
-              key={item.id}
-              onClick={() => handleDockClick(item.id)}
-              className="dock-item"
-              whileHover={{ y: -6, scale: 1.15 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label={`Open ${item.label}`}
+          {/* Footer */}
+          <div className="xp-menu-footer">
+            <button
+              onClick={() => {
+                setStartMenuOpen(false);
+                setMode('executive');
+              }}
+              className="xp-menu-logoff-btn"
             >
-              {item.icon}
-              <div className="dock-tooltip">{item.label}</div>
-              {isOpen && <div className="dock-dot" />}
-            </motion.button>
-          );
-        })}
+              <Sparkles size={14} color="#ffcf24" />
+              <span>Switch to Recruiter View</span>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Windows XP Bottom Taskbar */}
+      <div className="xp-taskbar">
+        {/* Iconic Green Start Button */}
+        <button
+          onClick={handleStartToggle}
+          className={`xp-start-btn ${startMenuOpen ? 'is-active' : ''}`}
+          aria-label="Windows XP Start"
+        >
+          <div className="xp-flag">
+            <span className="xp-flag-red" />
+            <span className="xp-flag-green" />
+            <span className="xp-flag-blue" />
+            <span className="xp-flag-yellow" />
+          </div>
+          <span className="xp-start-text">start</span>
+        </button>
+
+        {/* Task Tabs for Open Windows */}
+        <div className="xp-task-tabs">
+          {windowConfigs.map((cfg) => {
+            const win = windows[cfg.id];
+            if (!win.isOpen) return null;
+
+            const isActive = activeWindowId === cfg.id && !win.isMinimized;
+
+            return (
+              <button
+                key={cfg.id}
+                onClick={() => handleTaskClick(cfg.id)}
+                className={`xp-task-tab ${isActive ? 'is-active' : ''}`}
+                title={win.title}
+              >
+                {cfg.icon}
+                <span>{cfg.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* System Tray & Clock */}
+        <div className="xp-tray">
+          <button
+            onClick={toggleSound}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+            title={soundEnabled ? 'Mute audio' : 'Enable audio'}
+          >
+            {soundEnabled ? <Volume2 size={15} color="#ffffff" /> : <VolumeX size={15} color="#cbd5e1" />}
+          </button>
+          <Clock size={14} color="#ffffff" />
+          <span className="xp-clock">{time}</span>
+        </div>
       </div>
     </>
   );

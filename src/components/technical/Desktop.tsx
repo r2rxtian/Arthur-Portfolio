@@ -20,53 +20,84 @@ import { SkillsApp } from './SkillsApp';
 export const Desktop: React.FC = () => {
   return (
     <div className="desktop-container">
-      {/* Ambient background decoration */}
-      <div className="desktop-ambient" />
-      <div className="desktop-glow-blob desktop-glow-1" />
-      <div className="desktop-glow-blob desktop-glow-2" />
+      {/* Cartoon Windows XP "Bliss" Landscape */}
+      <div className="bliss-landscape">
+        {/* Puffy cartoon clouds */}
+        <div className="cartoon-cloud cartoon-cloud-1" />
+        <div className="cartoon-cloud cartoon-cloud-2" />
+        <div className="cartoon-cloud cartoon-cloud-3" />
 
-      {/* Top Status Bar & Bottom Dock */}
-      <Taskbar />
+        {/* Rolling Cartoon Hills (SVG) */}
+        <svg
+          className="bliss-hills-svg"
+          viewBox="0 0 1440 600"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          {/* Distant hill */}
+          <path
+            d="M0,320 C320,240 420,180 720,260 C1020,340 1200,200 1440,240 L1440,600 L0,600 Z"
+            fill="#38a169"
+            opacity="0.85"
+          />
+          {/* Middle hill */}
+          <path
+            d="M0,380 C360,280 600,420 960,320 C1200,260 1340,360 1440,340 L1440,600 L0,600 Z"
+            fill="#48bb78"
+            opacity="0.95"
+          />
+          {/* Foreground main rolling hill */}
+          <path
+            d="M0,430 C280,330 520,380 840,440 C1140,500 1280,390 1440,410 L1440,600 L0,600 Z"
+            fill="#52c41a"
+          />
+          {/* Vibrant bottom lush grass */}
+          <path
+            d="M0,520 C400,460 760,550 1100,480 C1280,450 1380,500 1440,490 L1440,600 L0,600 Z"
+            fill="#389e0d"
+          />
+        </svg>
+      </div>
 
       {/* Desktop Shortcuts Area */}
       <div className="desktop-icons-area">
         <DesktopIcon
           id="terminal"
-          title="Terminal CLI"
-          icon={<Terminal size={26} color="#38bdf8" />}
+          title="Command Prompt"
+          icon={<Terminal size={28} color="#0055ea" />}
         />
         <DesktopIcon
           id="ide"
           title="Code Studio"
-          icon={<Code2 size={26} color="#818cf8" />}
+          icon={<Code2 size={28} color="#00d2ff" />}
         />
         <DesktopIcon
           id="projects"
-          title="Projects"
-          icon={<FolderGit2 size={26} color="#34d399" />}
+          title="My Projects"
+          icon={<FolderGit2 size={28} color="#ff7a00" />}
         />
         <DesktopIcon
           id="skills"
-          title="Tech Stack"
-          icon={<Cpu size={26} color="#f59e0b" />}
+          title="Tech Matrix"
+          icon={<Cpu size={28} color="#ff5299" />}
         />
         <DesktopIcon
           id="about"
-          title="About Arthur"
-          icon={<UserCheck size={26} color="#ec4899" />}
+          title="My Computer"
+          icon={<UserCheck size={28} color="#8338ec" />}
         />
         <DesktopIcon
           id="resume"
           title="Resume.pdf"
-          icon={<FileText size={26} color="#cbd5e1" />}
+          icon={<FileText size={28} color="#0055ea" />}
         />
       </div>
 
       {/* Active Windows */}
       <WindowFrame
         id="terminal"
-        title="Terminal — zsh (developer@portfolio)"
-        icon={<Terminal size={14} color="#38bdf8" />}
+        title="Command Prompt — zsh (developer@portfolio)"
+        icon={<Terminal size={15} color="#ffffff" />}
       >
         <TerminalApp />
       </WindowFrame>
@@ -74,23 +105,23 @@ export const Desktop: React.FC = () => {
       <WindowFrame
         id="ide"
         title="Code Studio — Mock IDE"
-        icon={<Code2 size={14} color="#818cf8" />}
+        icon={<Code2 size={15} color="#ffffff" />}
       >
         <IdeApp />
       </WindowFrame>
 
       <WindowFrame
         id="projects"
-        title="Production Projects"
-        icon={<FolderGit2 size={14} color="#34d399" />}
+        title="My Production Projects"
+        icon={<FolderGit2 size={15} color="#ffffff" />}
       >
         <ProjectsFolderApp />
       </WindowFrame>
 
       <WindowFrame
         id="skills"
-        title="Technical Skills & Competency Matrix"
-        icon={<Cpu size={14} color="#f59e0b" />}
+        title="Tech Stack & Competency Matrix"
+        icon={<Cpu size={15} color="#ffffff" />}
       >
         <SkillsApp />
       </WindowFrame>
@@ -98,18 +129,21 @@ export const Desktop: React.FC = () => {
       <WindowFrame
         id="about"
         title="System Profiler — About Arthur"
-        icon={<UserCheck size={14} color="#ec4899" />}
+        icon={<UserCheck size={15} color="#ffffff" />}
       >
         <AboutApp />
       </WindowFrame>
 
       <WindowFrame
         id="resume"
-        title="Document Viewer — Arthur_CV.pdf"
-        icon={<FileText size={14} color="#cbd5e1" />}
+        title="Arthur_CV.pdf — Document Viewer"
+        icon={<FileText size={15} color="#ffffff" />}
       >
         <ResumeApp />
       </WindowFrame>
+
+      {/* Windows XP Taskbar */}
+      <Taskbar />
     </div>
   );
 };

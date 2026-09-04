@@ -35,12 +35,12 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({ id, title, icon, child
       style={{
         zIndex: win.zIndex,
         width: win.isMaximized ? '100vw' : win.size.width,
-        height: win.isMaximized ? 'calc(100vh - 104px)' : win.size.height,
+        height: win.isMaximized ? 'calc(100vh - 36px)' : win.size.height,
         left: win.isMaximized ? 0 : undefined,
-        top: win.isMaximized ? 32 : undefined,
+        top: win.isMaximized ? 0 : undefined,
       }}
     >
-      {/* Title bar / Drag handle */}
+      {/* Classic Windows XP Luna Title bar */}
       <div
         className="os-window-header"
         onPointerDown={(e) => {
@@ -50,42 +50,47 @@ export const WindowFrame: React.FC<WindowFrameProps> = ({ id, title, icon, child
         }}
         onDoubleClick={() => maximizeWindow(id)}
       >
-        <div className="traffic-lights">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              closeWindow(id);
-            }}
-            className="traffic-btn traffic-btn-close"
-            title="Close"
-            aria-label="Close window"
-          />
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              minimizeWindow(id);
-            }}
-            className="traffic-btn traffic-btn-minimize"
-            title="Minimize"
-            aria-label="Minimize window"
-          />
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              maximizeWindow(id);
-            }}
-            className="traffic-btn traffic-btn-maximize"
-            title="Maximize / Restore"
-            aria-label="Maximize window"
-          />
-        </div>
-
         <div className="os-window-title">
           {icon}
           <span>{title}</span>
         </div>
 
-        <div style={{ width: 48 }} />
+        {/* Windows XP Gel Buttons (Min, Max, Close) */}
+        <div className="traffic-lights">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              minimizeWindow(id);
+            }}
+            className="xp-btn xp-btn-min"
+            title="Minimize"
+            aria-label="Minimize window"
+          >
+            —
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              maximizeWindow(id);
+            }}
+            className="xp-btn xp-btn-max"
+            title="Maximize / Restore"
+            aria-label="Maximize window"
+          >
+            ◻
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              closeWindow(id);
+            }}
+            className="xp-btn xp-btn-close"
+            title="Close"
+            aria-label="Close window"
+          >
+            ✕
+          </button>
+        </div>
       </div>
 
       {/* Window Body */}

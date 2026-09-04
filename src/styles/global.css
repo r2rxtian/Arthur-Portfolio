@@ -13,8 +13,8 @@ body {
   width: 100%;
   height: 100%;
   overflow-x: hidden;
-  background-color: var(--os-bg);
-  color: var(--os-text-primary);
+  background-color: var(--bliss-sky-mid);
+  color: var(--cartoon-ink);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -26,41 +26,41 @@ body {
   position: relative;
 }
 
-/* Custom Scrollbars */
+/* Custom Cartoony Scrollbars */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(15, 23, 42, 0.4);
+  background: #ece9d8;
+  border-left: 1px solid #d4d0c8;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.25);
+  background: linear-gradient(180deg, #3a8bfd 0%, #0055ea 100%);
+  border: 1px solid #0036ab;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.45);
+  background: linear-gradient(180deg, #70aeff 0%, #3a8bfd 100%);
 }
 
-/* Code & Pre Formatting */
 code,
 pre {
   font-family: var(--font-mono);
 }
 
-/* Selection */
 ::selection {
-  background: rgba(56, 189, 248, 0.3);
-  color: #fff;
+  background: var(--cartoon-yellow);
+  color: var(--cartoon-ink);
 }
 
-/* Floating Perspective Toggle */
+/* Floating Cartoony Perspective Toggle */
 .perspective-toggle-wrapper {
   position: fixed;
-  bottom: 24px;
+  bottom: 40px;
   right: 24px;
   z-index: 9999;
   display: flex;
@@ -71,33 +71,35 @@ pre {
 .perspective-toggle {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px 6px 14px;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  gap: 10px;
+  padding: 8px 14px 8px 16px;
+  background: #ffffff;
+  border: 2.5px solid var(--cartoon-ink);
   border-radius: 9999px;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(56, 189, 248, 0.25);
+  box-shadow: var(--shadow-cartoon-md);
   cursor: pointer;
   user-select: none;
-  transition: all var(--transition-normal);
+  font-family: var(--font-display);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .perspective-toggle:hover {
-  border-color: rgba(56, 189, 248, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px -5px rgba(0, 0, 0, 0.7), 0 0 20px rgba(56, 189, 248, 0.4);
+  transform: translate(-2px, -2px);
+  box-shadow: var(--shadow-cartoon-lg);
+}
+
+.perspective-toggle:active {
+  transform: translate(2px, 2px);
+  box-shadow: var(--shadow-cartoon-sm);
 }
 
 .perspective-label {
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  color: #f1f5f9;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cartoon-ink);
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .perspective-badge {
@@ -105,52 +107,42 @@ pre {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 6px 12px;
-  background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+  padding: 6px 14px;
+  background: linear-gradient(180deg, #3a8bfd 0%, #0055ea 100%);
+  border: 2px solid var(--cartoon-ink);
   color: #ffffff;
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 700;
   border-radius: 9999px;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .perspective-badge.exec {
-  background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+  background: linear-gradient(180deg, #ffcf24 0%, #ff7a00 100%);
+  color: var(--cartoon-ink);
 }
 
 .sound-toggle-btn {
-  width: 42px;
-  height: 42px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #94a3b8;
+  background: #ffffff;
+  border: 2.5px solid var(--cartoon-ink);
+  color: var(--cartoon-ink);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all var(--transition-normal);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-cartoon-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .sound-toggle-btn:hover {
-  color: #f8fafc;
-  border-color: rgba(255, 255, 255, 0.25);
-  transform: translateY(-2px);
+  transform: translate(-1px, -1px);
+  box-shadow: var(--shadow-cartoon-md);
+  background: #fff8dc;
 }
 
 .sound-toggle-btn.active {
-  color: #38bdf8;
-  border-color: rgba(56, 189, 248, 0.4);
-}
-
-/* Animations */
-@keyframes pulseGlow {
-  0%, 100% {
-    opacity: 0.4;
-  }
-  50% {
-    opacity: 0.8;
-  }
+  background: var(--cartoon-yellow);
 }
