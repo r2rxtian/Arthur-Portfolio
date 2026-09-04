@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Copy, Check, Calendar, Download } from 'lucide-react';
+import { Copy, Check, Calendar, Download, Sparkles, Send } from 'lucide-react';
 import { GithubIcon, LinkedinIcon } from '../common/Icons';
 import { profileData } from '../../data/profile';
 import { experienceData } from '../../data/experience';
+import { ScrollReveal } from './ScrollReveal';
 
 export const ContactSection: React.FC = () => {
   const [copied, setCopied] = useState(false);
@@ -51,68 +52,90 @@ ${experienceData
 
   return (
     <section className="exec-section" id="contact">
-      <div className="exec-contact-card">
-        <div className="exec-section-eyebrow" style={{ marginBottom: 4 }}>
-          <span className="exec-num-accent">05</span> // INITIATE DIALOGUE
-        </div>
-        <h2 className="exec-contact-title">Let's Discuss High-Impact Opportunities</h2>
-        <p className="exec-contact-desc">
-          Whether you are seeking a lead engineer to build your next-generation platform, scale your distributed backend, or drive technical strategy across your teams.
-        </p>
+      <ScrollReveal direction="up" distance={32}>
+        <div className="exec-contact-card">
+          <div className="exec-contact-glow-top" />
 
-        <div className="exec-contact-actions">
-          <button
-            onClick={handleCopyEmail}
-            className="exec-btn exec-btn-primary"
-            title="Copy email address"
-          >
-            {copied ? <Check size={16} /> : <Copy size={16} />}
-            <span>{copied ? 'Email Copied to Clipboard!' : 'Copy Email Address'}</span>
-          </button>
+          <div className="exec-section-eyebrow" style={{ marginBottom: 4 }}>
+            <span className="exec-num-accent">05</span>
+            <span className="exec-eyebrow-divider">//</span>
+            <span>INITIATE DIALOGUE</span>
+          </div>
 
-          {profileData.contact.meetingUrl && (
+          <h2 className="exec-contact-title">Let's Discuss High-Impact Engineering Roles</h2>
+          <p className="exec-contact-desc">
+            Seeking opportunities to design, build, and scale practical software solutions — combining full-stack web development, cloud architectures, and user-focused product delivery.
+          </p>
+
+          <div className="exec-contact-actions">
+            <button
+              onClick={handleCopyEmail}
+              className="exec-btn exec-btn-primary"
+              title="Copy email address to clipboard"
+            >
+              {copied ? <Check size={16} color="#34d399" /> : <Copy size={16} />}
+              <span>{copied ? 'Email Copied to Clipboard!' : 'Copy Email Address'}</span>
+            </button>
+
             <a
-              href={profileData.contact.meetingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={`mailto:${profileData.contact.email}?subject=Software%20Engineering%20Opportunity%20-%20Arthur%20Christian`}
               className="exec-btn exec-btn-secondary"
             >
-              <Calendar size={16} color="#38bdf8" />
-              <span>Schedule 20-min Intro</span>
+              <Send size={15} color="#38bdf8" />
+              <span>Direct Email</span>
             </a>
-          )}
 
-          <button
-            onClick={handleDownloadCV}
-            className="exec-btn exec-btn-secondary"
-          >
-            <Download size={16} color="#10b981" />
-            <span>Download Executive CV</span>
-          </button>
+            {profileData.contact.meetingUrl && (
+              <a
+                href={profileData.contact.meetingUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="exec-btn exec-btn-secondary"
+              >
+                <Calendar size={16} color="#818cf8" />
+                <span>Schedule 20-min Intro</span>
+              </a>
+            )}
+
+            <button
+              onClick={handleDownloadCV}
+              className="exec-btn exec-btn-secondary"
+            >
+              <Download size={16} color="#34d399" />
+              <span>Download Executive CV</span>
+            </button>
+          </div>
+
+          <div className="exec-contact-footer-links">
+            <a
+              href={profileData.contact.github}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="exec-contact-link"
+            >
+              <GithubIcon size={16} />
+              <span>GitHub ({profileData.handle})</span>
+            </a>
+
+            <a
+              href={profileData.contact.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="exec-contact-link"
+            >
+              <LinkedinIcon size={16} color="#38bdf8" />
+              <span>LinkedIn Profile</span>
+            </a>
+
+            <div className="exec-contact-status-chip">
+              <span className="exec-status-dot" />
+              <Sparkles size={12} color="#34d399" />
+              <span>{profileData.status}</span>
+            </div>
+          </div>
         </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginTop: 12 }}>
-          <a
-            href={profileData.contact.github}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}
-          >
-            <GithubIcon size={16} />
-            <span>GitHub ({profileData.handle})</span>
-          </a>
-
-          <a
-            href={profileData.contact.linkedin}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94a3b8', textDecoration: 'none', fontSize: 13 }}
-          >
-            <LinkedinIcon size={16} color="#38bdf8" />
-            <span>LinkedIn Profile</span>
-          </a>
-        </div>
-      </div>
+      </ScrollReveal>
     </section>
   );
 };
+
