@@ -1,40 +1,41 @@
-import React from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ModeProvider, useMode } from './context/ModeContext';
 import { OSProvider } from './context/OSContext';
-import { Desktop } from './components/technical/Desktop';
+import { Workbench } from './components/workbench/Workbench';
 import { ExecutiveLayout } from './components/executive/ExecutiveLayout';
 import { PerspectiveToggle } from './components/common/PerspectiveToggle';
-import { CustomCursor } from './components/common/CustomCursor';
 import './styles/global.css';
 
 const PortfolioContent: React.FC = () => {
   const { mode } = useMode();
+  const reducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [mode]);
 
   return (
     <>
-      {/* Animated Custom Reticle Cursor */}
-      <CustomCursor />
-
       <AnimatePresence mode="wait">
         {mode === 'technical' ? (
           <motion.div
             key="technical"
-            initial={{ opacity: 0, scale: 0.98, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, scale: 1.02, filter: 'blur(4px)' }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: reducedMotion ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: reducedMotion ? 1 : 0 }}
+            transition={{ duration: reducedMotion ? 0 : 0.2 }}
             style={{ width: '100%', height: '100%' }}
           >
-            <Desktop />
+            <Workbench />
           </motion.div>
         ) : (
           <motion.div
             key="executive"
-            initial={{ opacity: 0, y: 15, filter: 'blur(4px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={{ opacity: 0, y: -15, filter: 'blur(4px)' }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: reducedMotion ? 1 : 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: reducedMotion ? 1 : 0 }}
+            transition={{ duration: reducedMotion ? 0 : 0.25 }}
             style={{ width: '100%', minHeight: '100vh' }}
           >
             <ExecutiveLayout />
@@ -43,7 +44,7 @@ const PortfolioContent: React.FC = () => {
       </AnimatePresence>
 
       {/* Global Floating Perspective Switcher */}
-      <PerspectiveToggle />
+      {mode === 'executive' && <PerspectiveToggle />}
     </>
   );
 };

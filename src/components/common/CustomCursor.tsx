@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
+import { useReducedMotion } from 'framer-motion';
 import { useMode } from '../../context/ModeContext';
 import '../../styles/cursor.css';
 
@@ -21,6 +22,12 @@ interface SparkParticle {
 }
 
 export const CustomCursor: React.FC = () => {
+  const { mode, cursorEnabled } = useMode();
+  const reducedMotion = useReducedMotion();
+  return mode === 'technical' && cursorEnabled && !reducedMotion ? <CursorEffects /> : null;
+};
+
+const CursorEffects: React.FC = () => {
   const { mode } = useMode();
   const [enabled] = useState<boolean>(() => {
     if (typeof window === 'undefined') return false;

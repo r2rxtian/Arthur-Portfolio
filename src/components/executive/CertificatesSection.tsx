@@ -1,242 +1,89 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Award,
-  ExternalLink,
-  CheckCircle2,
-  Copy,
-  Check,
-  Calendar,
-  ShieldCheck,
-  Layers,
-  Cloud,
-  Cpu,
-  Code2,
-  Database,
-} from 'lucide-react';
+﻿import { useEffect, useRef, useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { ArrowUpRight, Award, Check, ChevronDown, Copy } from 'lucide-react';
 import { certificatesData } from '../../data/certificates';
 import type { Certificate } from '../../types/portfolio';
 import { ScrollReveal } from './ScrollReveal';
 
 type FilterCategory = 'All' | Certificate['category'];
+const categories: FilterCategory[] = ['All', 'Cloud & Architecture', 'DevOps & Containers', 'Full-Stack & Frontend', 'Security & Data'];
 
-export const CertificatesSection: React.FC = () => {
+export function CertificatesSection() {
+  const reducedMotion = useReducedMotion();
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('All');
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [copyError, setCopyError] = useState(false);
+  const copyTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const filtered = certificatesData.filter((cert) => activeFilter === 'All' || cert.category === activeFilter);
+  useEffect(() => () => { if (copyTimer.current) clearTimeout(copyTimer.current); }, []);
 
-  const categories: FilterCategory[] = [
-    'All',
-    'Cloud & Architecture',
-    'DevOps & Containers',
-    'Full-Stack & Frontend',
-    'Security & Data',
-  ];
-
-  const filteredCerts =
-    activeFilter === 'All'
-      ? certificatesData
-      : certificatesData.filter((c) => c.category === activeFilter);
-
-  const handleCopyId = (e: React.MouseEvent, id: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    navigator.clipboard.writeText(id);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const getIssuerIcon = (code: Certificate['issuerCode']) => {
-    switch (code) {
-      case 'AWS':
-        return <Cloud size={20} color="#ff9900" />;
-      case 'GCP':
-        return <Layers size={20} color="#4285f4" />;
-      case 'CNCF':
-        return <Cpu size={20} color="#326ce5" />;
-      case 'HASHICORP':
-        return <Code2 size={20} color="#a855f7" />;
-      case 'META':
-        return <Code2 size={20} color="#00d2ff" />;
-      case 'MONGO':
-        return <Database size={20} color="#00ed64" />;
-      default:
-        return <Award size={20} color="#38bdf8" />;
+  async function copyCredential(id: string) {
+    if (copyTimer.current) clearTimeout(copyTimer.current);
+    try {
+      await navigator.clipboard.writeText(id);
+      setCopiedId(id);
+      setCopyError(false);
+    } catch {
+      setCopiedId(null);
+      setCopyError(true);
     }
-  };
+    copyTimer.current = setTimeout(() => { setCopiedId(null); setCopyError(false); }, 2500);
+  }
 
   return (
-    <section className="exec-section" id="certificates">
-      {/* Section Header */}
-      <ScrollReveal direction="up" distance={24}>
-        <div className="exec-section-header">
-          <div className="exec-section-eyebrow">
-            <span className="exec-num-accent">02</span>
-            <span className="exec-eyebrow-divider">//</span>
-            <span>ACCREDITATIONS & CREDENTIALS</span>
-          </div>
-          <h2 className="exec-section-title">Verified Technical Certifications</h2>
-          <p className="exec-section-subtitle">
-            Industry-recognized professional credentials validating scalable systems, cloud infrastructure, container orchestration, and full-stack engineering standards.
-          </p>
+    <section className="exec-section" id="certificates" aria-labelledby="certificates-heading">
+      <ScrollReveal className="exec-section-header">
+        <h2 id="certificates-heading">Always learning<span>.</span></h2>
+        <p>Credentials across cloud architecture, development, and infrastructure.</p>
+      </ScrollReveal>
+      <ScrollReveal>
+        <div className="cert-filter-bar" role="group" aria-label="Filter certifications">
+          {categories.map((category) => (
+            <button key={category} className="cert-filter-btn" aria-pressed={activeFilter === category}
+              onClick={() => setActiveFilter(category)}>
+              {activeFilter === category && <motion.span layoutId="certificate-filter" className="cert-filter-selection"
+                transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 330, damping: 34 }} />}
+              <span>{category === 'All' ? 'All credentials' : category}</span>
+            </button>
+          ))}
         </div>
       </ScrollReveal>
-
-      {/* Filter Category Tabs with Animated Indicator */}
-      <ScrollReveal direction="up" distance={16} delay={0.08}>
-        <div className="cert-filter-bar">
-          {categories.map((cat) => {
-            const count =
-              cat === 'All'
-                ? certificatesData.length
-                : certificatesData.filter((c) => c.category === cat).length;
-            const isActive = activeFilter === cat;
-
-            return (
-              <button
-                key={cat}
-                onClick={() => setActiveFilter(cat)}
-                className={`cert-filter-btn ${isActive ? 'is-active' : ''}`}
-                style={{ position: 'relative' }}
-              >
-                {isActive && (
-                  <motion.div
-                    layoutId="certActivePill"
-                    className="cert-filter-active-pill"
-                    transition={{ type: 'spring', stiffness: 350, damping: 30 }}
-                  />
-                )}
-                <span style={{ position: 'relative', zIndex: 2 }}>{cat}</span>
-                <span className="cert-filter-badge" style={{ position: 'relative', zIndex: 2 }}>
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </ScrollReveal>
-
-      {/* Certificates Grid with Layout Animations */}
-      <motion.div layout className="cert-grid">
-        <AnimatePresence mode="popLayout">
-          {filteredCerts.map((cert, idx) => (
-            <motion.div
-              layout
-              key={cert.id}
-              initial={{ opacity: 0, y: 20, scale: 0.96 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.94 }}
-              transition={{
-                duration: 0.45,
-                delay: idx * 0.04,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="cert-card"
-            >
-              {/* Top Accent Gradient Bar */}
-              <div className="cert-top-bar" style={{ background: cert.gradient }} />
-
-              <div className="cert-card-inner">
-                {/* Header: Issuer Icon, Category, and Verified Tag */}
-                <div className="cert-header">
-                  <div
-                    className="cert-issuer-icon-wrap"
-                    style={{
-                      background: `rgba(15, 23, 42, 0.85)`,
-                      borderColor: `${cert.accentColor}44`,
-                      boxShadow: `0 0 16px ${cert.accentColor}22`,
-                    }}
-                  >
-                    {getIssuerIcon(cert.issuerCode)}
-                  </div>
-
-                  <div className="cert-meta-wrap">
-                    <span
-                      className="cert-category-tag"
-                      style={{ borderColor: `${cert.accentColor}44`, color: cert.accentColor }}
-                    >
-                      {cert.category}
-                    </span>
-                    <div className="cert-verified-pill">
-                      <span className="cert-pulse-dot" />
-                      <ShieldCheck size={13} color="#10b981" />
-                      <span>Verified</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Title & Issuer Info */}
-                <div className="cert-content">
-                  <h3 className="cert-title">{cert.title}</h3>
-                  <div className="cert-issuer-name">{cert.issuer}</div>
-                  <p className="cert-summary">{cert.summary}</p>
-                </div>
-
-                {/* Credential Metadata Box */}
-                <div className="cert-credentials-box">
-                  <div className="cert-cred-row">
-                    <span className="cert-cred-label">
-                      <Calendar size={13} color="#94a3b8" />
-                      <span>Validity:</span>
-                    </span>
-                    <span className="cert-cred-val">{cert.expiryDate}</span>
-                  </div>
-
-                  <div className="cert-cred-row">
-                    <span className="cert-cred-label">
-                      <CheckCircle2 size={13} color="#94a3b8" />
-                      <span>Credential ID:</span>
-                    </span>
-                    <div className="cert-id-copy-group">
-                      <code className="cert-id-code">{cert.credentialId}</code>
-                      <button
-                        onClick={(e) => handleCopyId(e, cert.credentialId)}
-                        className="cert-copy-btn"
-                        title="Copy Credential ID"
-                      >
-                        {copiedId === cert.credentialId ? (
-                          <Check size={13} color="#10b981" />
-                        ) : (
-                          <Copy size={13} color="#94a3b8" />
-                        )}
-                        <span>{copiedId === cert.credentialId ? 'Copied!' : 'Copy'}</span>
+      <div className="cert-grid" aria-live="polite">
+        <AnimatePresence mode="popLayout" initial={false}>
+          {filtered.map((cert) => (
+            <motion.article key={cert.id} layout={reducedMotion ? false : 'position'} className="cert-card"
+              initial={reducedMotion ? false : { opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 160, damping: 28, opacity: { duration: reducedMotion ? 0 : 0.2 } }}>
+              <div className="cert-issuer-mark"><Award size={22} strokeWidth={1.5} /></div>
+              <div className="cert-card-content">
+                <p className="cert-issuer-name">{cert.issuerCode === 'HASHICORP' ? 'HashiCorp' : cert.issuerCode}</p>
+                <h3>{cert.title.replaceAll('—', '-').replaceAll('–', '-')}</h3>
+                <p className="cert-validity">{cert.expiryDate.replace('Active · ', '')}</p>
+                <details className="exec-disclosure">
+                  <summary>Credential details <ChevronDown size={15} /></summary>
+                  <div className="exec-disclosure-body">
+                    <p>{cert.summary}</p>
+                    <p className="exec-caption">Issued {cert.issueDate}</p>
+                    <div className="cert-credential-id">
+                      <code>{cert.credentialId}</code>
+                      <button className="exec-icon-button" onClick={() => void copyCredential(cert.credentialId)}
+                        aria-label={`Copy credential ID ${cert.credentialId}`}>
+                        {copiedId === cert.credentialId ? <Check size={15} /> : <Copy size={15} />}
                       </button>
                     </div>
+                    <p>{cert.skills.join(', ')}</p>
+                    <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer" className="exec-text-link">
+                      Issuer website <ArrowUpRight size={15} />
+                    </a>
                   </div>
-                </div>
-
-                {/* Validated Skills Pills */}
-                <div className="cert-skills-section">
-                  <span className="cert-skills-heading">Validated Competencies:</span>
-                  <div className="cert-skills-wrap">
-                    {cert.skills.map((skill) => (
-                      <span key={skill} className="cert-skill-pill">
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Footer: Verification CTA */}
-                <div className="cert-footer">
-                  <a
-                    href={cert.credentialUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="cert-verify-link"
-                    style={{
-                      borderColor: `${cert.accentColor}55`,
-                    }}
-                  >
-                    <span>Verify Credential on Issuer Site</span>
-                    <ExternalLink size={14} />
-                  </a>
-                </div>
+                </details>
               </div>
-            </motion.div>
+            </motion.article>
           ))}
         </AnimatePresence>
-      </motion.div>
+      </div>
+      <p className="exec-feedback" role="status">{copyError ? 'Copy unavailable. You can select and copy the credential ID above.' : copiedId ? 'Credential ID copied.' : ''}</p>
     </section>
   );
-};
-
+}

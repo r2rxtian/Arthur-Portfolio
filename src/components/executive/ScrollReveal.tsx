@@ -1,76 +1,36 @@
-import React from 'react';
-import { motion, type HTMLMotionProps } from 'framer-motion';
+﻿import { motion, useReducedMotion, type HTMLMotionProps } from 'framer-motion';
 
-export type RevealDirection = 'up' | 'down' | 'left' | 'right' | 'scale' | 'none';
-
+type RevealDirection = 'up' | 'down' | 'left' | 'right' | 'scale' | 'none';
 interface ScrollRevealProps extends HTMLMotionProps<'div'> {
-  children: React.ReactNode;
   direction?: RevealDirection;
   delay?: number;
   duration?: number;
   distance?: number;
-  className?: string;
-  viewportMargin?: string;
+  viewportMargin?: NonNullable<HTMLMotionProps<'div'>['viewport']>['margin'];
   once?: boolean;
 }
 
-export const ScrollReveal: React.FC<ScrollRevealProps> = ({
-  children,
-  direction = 'up',
-  delay = 0,
-  duration = 0.65,
-  distance = 32,
-  className = '',
-  viewportMargin = '-50px',
-  once = true,
-  style,
-  ...props
-}) => {
-  const getInitialPosition = () => {
-    switch (direction) {
-      case 'up':
-        return { opacity: 0, y: distance, x: 0 };
-      case 'down':
-        return { opacity: 0, y: -distance, x: 0 };
-      case 'left':
-        return { opacity: 0, x: distance, y: 0 };
-      case 'right':
-        return { opacity: 0, x: -distance, y: 0 };
-      case 'scale':
-        return { opacity: 0, scale: 0.95, y: 0, x: 0 };
-      case 'none':
-        return { opacity: 0 };
-      default:
-        return { opacity: 0, y: distance, x: 0 };
-    }
-  };
-
-  const getTargetPosition = () => {
-    switch (direction) {
-      case 'scale':
-        return { opacity: 1, scale: 1, y: 0, x: 0 };
-      default:
-        return { opacity: 1, y: 0, x: 0 };
-    }
-  };
-
+/** Small, one-time reveals; scrolling stays directly connected to input. */
+export function ScrollReveal({
+  children, direction = 'up', delay = 0, duration = 0.7, distance = 20,
+  viewportMargin = '0px 0px -24px 0px', once = true, ...props
+}: ScrollRevealProps) {
+  const reducedMotion = useReducedMotion();
+  const travel = Math.min(distance, 24);
+  const x = direction === 'left' ? travel : direction === 'right' ? -travel : 0;
+  const y = direction === 'up' ? travel : direction === 'down' ? -travel : 0;
   return (
     <motion.div
-      initial={getInitialPosition()}
-      whileInView={getTargetPosition()}
-      viewport={{ once, margin: viewportMargin as any }}
+      initial={reducedMotion ? false : { opacity: 0, x, y, scale: direction === 'scale' ? 0.985 : 1 }}
+      whileInView={{ opacity: 1, x: 0, y: 0, scale: 1 }}
+      viewport={{ once, margin: viewportMargin, amount: 'some' }}
       transition={{
-        duration,
-        delay,
-        ease: [0.22, 1, 0.36, 1],
+        type: 'spring', stiffness: 110, damping: 24, mass: 1,
+        delay: reducedMotion ? 0 : Math.min(delay, 0.12),
+        opacity: { duration: reducedMotion ? 0 : Math.min(duration, 0.45), ease: 'easeOut' },
       }}
-      className={className}
-      style={style}
       {...props}
-    >
-      {children}
-    </motion.div>
+    >{children}</motion.div>
   );
-};
-
+}
 export default ScrollReveal;

@@ -1,68 +1,21 @@
-import React from 'react';
-import { skillCategoriesData } from '../../data/skills';
+﻿import { skillCategoriesData } from '../../data/skills';
 import { ScrollReveal } from './ScrollReveal';
-import { Cpu, Terminal, Database, ShieldCheck } from 'lucide-react';
 
-export const SkillsSection: React.FC = () => {
-  const getCategoryIcon = (id: string) => {
-    switch (id) {
-      case 'frontend':
-        return <Cpu size={18} color="#38bdf8" />;
-      case 'backend':
-        return <Terminal size={18} color="#10b981" />;
-      case 'cloud':
-        return <Database size={18} color="#f59e0b" />;
-      default:
-        return <ShieldCheck size={18} color="#a855f7" />;
-    }
-  };
-
+export function SkillsSection() {
   return (
-    <section className="exec-section" id="skills">
-      {/* Section Header */}
-      <ScrollReveal direction="up" distance={24}>
-        <div className="exec-section-header">
-          <div className="exec-section-eyebrow">
-            <span className="exec-num-accent">04</span>
-            <span className="exec-eyebrow-divider">//</span>
-            <span>CORE COMPETENCIES & TECH MATRIX</span>
-          </div>
-          <h2 className="exec-section-title">Technical Domains & Stack Expertise</h2>
-          <p className="exec-section-subtitle">
-            Comprehensive stack proficiency spanning frontend reactivity, distributed backend infrastructure, database engines, and engineering governance.
-          </p>
-        </div>
+    <section className="exec-section" id="skills" aria-labelledby="skills-heading">
+      <ScrollReveal className="exec-section-header">
+        <h2 id="skills-heading">A connected skill set<span>.</span></h2>
+        <p>From the interface to the infrastructure, with care at every layer.</p>
       </ScrollReveal>
-
-      {/* Skills Grid */}
       <div className="skills-grid">
-        {skillCategoriesData.map((category, idx) => (
-          <ScrollReveal
-            key={category.id}
-            direction="up"
-            delay={idx * 0.08}
-            distance={28}
-          >
-            <div className="skills-category-card group">
-              <div className="skills-category-header">
-                <div className="skills-category-icon-wrap">
-                  {getCategoryIcon(category.id)}
-                </div>
-                <div>
-                  <h3 className="skills-category-title">{category.title}</h3>
-                  <p className="skills-category-sub">{category.subtitle}</p>
-                </div>
-              </div>
-
-              <div className="skills-badge-list">
-                {category.items.map((item) => (
-                  <span
-                    key={item.name}
-                    className={`skill-badge ${item.highlight ? 'highlight' : ''}`}
-                  >
-                    <span>{item.name}</span>
-                  </span>
-                ))}
+        {skillCategoriesData.map((category, index) => (
+          <ScrollReveal key={category.id} delay={index % 2 * 0.05}>
+            <div className="skills-category">
+              <h3>{category.title}</h3>
+              <p>{category.subtitle}</p>
+              <div className="skills-list">
+                {category.items.map((item) => <span key={item.name} className={item.highlight ? 'is-highlighted' : ''}>{item.name}</span>)}
               </div>
             </div>
           </ScrollReveal>
@@ -70,5 +23,4 @@ export const SkillsSection: React.FC = () => {
       </div>
     </section>
   );
-};
-
+}

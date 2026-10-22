@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import gsap from 'gsap';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import {
   Gamepad2,
   Terminal,
@@ -8,6 +8,8 @@ import {
   Cpu,
   UserCheck,
   FileText,
+  ArrowRight,
+  X,
 } from 'lucide-react';
 import { Taskbar } from './Taskbar';
 import { DesktopIcon } from './DesktopIcon';
@@ -19,6 +21,8 @@ import { AboutApp } from './AboutApp';
 import { ResumeApp } from './ResumeApp';
 import { SkillsApp } from './SkillsApp';
 import { AdventureGameApp } from './AdventureGame/AdventureGameApp';
+import { useOS } from '../../context/OSContext';
+import { profileData } from '../../data/profile';
 import {
   WinFolderIcon,
   WinAdventureIcon,
@@ -31,48 +35,29 @@ import {
 export const Desktop: React.FC = () => {
   const desktopRef = useRef<HTMLDivElement>(null);
   const [selectedIconKey, setSelectedIconKey] = React.useState<string | null>(null);
+  const [welcomeVisible, setWelcomeVisible] = React.useState(() => sessionStorage.getItem('desktop_welcome_dismissed') !== 'true');
+  const { openWindow } = useOS();
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
-    const ctx = gsap.context(() => {
-      // Staggered boot entrance for desktop icons
-      gsap.from('.desktop-icon-item', {
-        opacity: 0,
-        scale: 0.85,
-        y: 12,
-        duration: 0.45,
-        stagger: 0.04,
-        ease: 'power2.out',
-        delay: 0.08,
-      });
-
-      // Subtle ambient cloud drift
-      gsap.to('.bliss-cloud-wisp-1', {
-        x: 35,
-        duration: 20,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-      gsap.to('.bliss-cloud-wisp-2', {
-        x: -25,
-        duration: 26,
-        repeat: -1,
-        yoyo: true,
-        ease: 'sine.inOut',
-      });
-    }, desktopRef);
-
-    return () => ctx.revert();
-  }, []);
+    const shortcut = (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.code === 'Backquote') {
+        event.preventDefault(); openWindow('terminal');
+      }
+    };
+    window.addEventListener('keydown', shortcut);
+    return () => window.removeEventListener('keydown', shortcut);
+  }, [openWindow]);
 
   return (
     <div
       ref={desktopRef}
       className="desktop-container"
-      onClick={() => setSelectedIconKey(null)}
+      aria-label="ArthurOS desktop"
+      onClick={(event) => { if (!(event.target as HTMLElement).closest('button, a, input, [role="dialog"]')) setSelectedIconKey(null); }}
     >
       {/* Authentic Windows XP "Bliss" Atmospheric Landscape */}
-      <div className="bliss-landscape">
+      <div className="bliss-landscape" aria-hidden="true">
         {/* Soft Realistic Clouds */}
         <div className="bliss-cloud bliss-cloud-wisp-1" />
         <div className="bliss-cloud bliss-cloud-wisp-2" />
@@ -144,7 +129,7 @@ export const Desktop: React.FC = () => {
       </div>
 
       {/* Windows Desktop Icons — Exclusively for the 6 Portfolio Apps */}
-      <div className="desktop-icons-area">
+      <div className="desktop-icons-area" role="group" aria-label="Desktop applications">
         {/* 1. Adventure.exe (Quest) */}
         <DesktopIcon
           id="adventure"
@@ -218,10 +203,28 @@ export const Desktop: React.FC = () => {
         />
       </div>
 
+      <AnimatePresence>
+        {welcomeVisible && <motion.aside className="desktop-welcome" aria-label="Welcome to ArthurOS"
+          initial={reducedMotion ? false : { opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+          transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 180, damping: 26 }}>
+          <div className="desktop-welcome-bar"><span>Welcome to ArthurOS</span>
+            <button aria-label="Dismiss welcome" onClick={() => { setWelcomeVisible(false); sessionStorage.setItem('desktop_welcome_dismissed', 'true'); }}><X size={14} /></button>
+          </div>
+          <div className="desktop-welcome-body">
+            <p className="desktop-welcome-name">{profileData.name}</p>
+            <h1>A little nostalgia.<br />A lot to explore.</h1>
+            <p>Projects, source code, and a playable adventure. Make yourself at home.</p>
+            <button className="os-button os-button-primary" onClick={() => openWindow('projects')}>Open My Projects <ArrowRight size={15} /></button>
+            <p className="desktop-welcome-hint">Double-click an app to open it.<br />On touch screens, one tap is enough.</p>
+          </div>
+        </motion.aside>}
+      </AnimatePresence>
+
       {/* Active Windows */}
+      <div className="os-window-layer">
       <WindowFrame
         id="adventure"
-        title="Arthur Quest — The Project Odyssey (v1.0.exe)"
+        title="Adventure.exe - The Project Odyssey"
         icon={<Gamepad2 size={15} color="#ffd700" />}
       >
         <AdventureGameApp />
@@ -229,7 +232,7 @@ export const Desktop: React.FC = () => {
 
       <WindowFrame
         id="terminal"
-        title="Command Prompt — zsh (developer@portfolio)"
+        title="Command Prompt"
         icon={<Terminal size={15} color="#ffffff" />}
       >
         <TerminalApp />
@@ -237,7 +240,7 @@ export const Desktop: React.FC = () => {
 
       <WindowFrame
         id="ide"
-        title="Code Studio — Mock IDE"
+        title="Code Studio - Source Explorer"
         icon={<Code2 size={15} color="#ffffff" />}
       >
         <IdeApp />
@@ -245,7 +248,7 @@ export const Desktop: React.FC = () => {
 
       <WindowFrame
         id="projects"
-        title="My Production Projects"
+        title="My Projects"
         icon={<FolderGit2 size={15} color="#ffffff" />}
       >
         <ProjectsFolderApp />
@@ -253,7 +256,7 @@ export const Desktop: React.FC = () => {
 
       <WindowFrame
         id="skills"
-        title="Tech Stack & Competency Matrix"
+        title="Tech Stack Inspector"
         icon={<Cpu size={15} color="#ffffff" />}
       >
         <SkillsApp />
@@ -261,7 +264,7 @@ export const Desktop: React.FC = () => {
 
       <WindowFrame
         id="about"
-        title="System Profiler — About Arthur"
+        title="System Properties - About Arthur"
         icon={<UserCheck size={15} color="#ffffff" />}
       >
         <AboutApp />
@@ -269,13 +272,14 @@ export const Desktop: React.FC = () => {
 
       <WindowFrame
         id="resume"
-        title="Arthur_CV.pdf — Document Viewer"
+        title="Curriculum Vitae"
         icon={<FileText size={15} color="#ffffff" />}
       >
         <ResumeApp />
       </WindowFrame>
 
       {/* Windows XP Taskbar */}
+      </div>
       <Taskbar />
     </div>
   );

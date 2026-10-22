@@ -17,16 +17,25 @@ import type { ShrineMilestone } from './gameData';
 import { shrinesData, getProjectForShrine } from './gameData';
 
 export const AdventureGameApp: React.FC = () => {
-  const { openWindow } = useOS();
+  const { openWindow, inspectProject, activeWindowId, windows } = useOS();
   const { soundEnabled, toggleSound, sounds } = useMode();
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<AdventureGameEngine | null>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const soundsRef = useRef(sounds);
+  useEffect(() => { soundsRef.current = sounds; }, [sounds]);
 
   const [nearShrine, setNearShrine] = useState<ShrineMilestone | null>(null);
   const [activeModalShrine, setActiveModalShrine] = useState<ShrineMilestone | null>(null);
   const [discoveredIds, setDiscoveredIds] = useState<string[]>([]);
   const [scanlines, setScanlines] = useState<boolean>(true);
+
+  useEffect(() => {
+    if (activeWindowId !== 'adventure' || windows.adventure.isMinimized) return;
+    if (activeModalShrine) dialogRef.current?.focus({ preventScroll: true });
+    else canvasRef.current?.focus({ preventScroll: true });
+  }, [activeModalShrine, activeWindowId, windows.adventure.isMinimized]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -38,13 +47,12 @@ export const AdventureGameApp: React.FC = () => {
         setNearShrine(shrine);
       },
       onInteract: (shrine) => {
-        sounds.playClick();
+        soundsRef.current.playClick();
         setActiveModalShrine(shrine);
       },
       onDiscover: (shrineId) => {
         setDiscoveredIds((prev) => {
           if (!prev.includes(shrineId)) {
-            sounds.playWindowOpen();
             return [...prev, shrineId];
           }
           return prev;
@@ -58,12 +66,19 @@ export const AdventureGameApp: React.FC = () => {
     return () => {
       engine.destroy();
     };
-  }, [sounds]);
+  }, []);
+
+  useEffect(() => {
+    const sync = () => engineRef.current?.setActive(activeWindowId === 'adventure' && !windows.adventure.isMinimized && !activeModalShrine && !document.hidden);
+    sync();
+    document.addEventListener('visibilitychange', sync);
+    return () => document.removeEventListener('visibilitychange', sync);
+  }, [activeWindowId, windows.adventure.isMinimized, activeModalShrine]);
 
   const handleInspectProjectInIDE = () => {
     sounds.playClick();
     setActiveModalShrine(null);
-    openWindow('ide');
+    if (activeModalShrine?.projectId) inspectProject(activeModalShrine.projectId);
   };
 
   const activeProject = activeModalShrine?.projectId
@@ -81,15 +96,6 @@ export const AdventureGameApp: React.FC = () => {
             <span className="adv-game-version">v1.0.exe</span>
           </div>
 
-          <div className="adv-hud-stats">
-            <span className="adv-hud-level">LVL. 99</span>
-            <div className="adv-hp-wrap">
-              <span className="adv-hp-label">HP</span>
-              <div className="adv-hp-bar">
-                <div className="adv-hp-fill" style={{ width: '100%' }} />
-              </div>
-            </div>
-          </div>
         </div>
 
         <div className="adv-hud-center">
@@ -123,7 +129,7 @@ export const AdventureGameApp: React.FC = () => {
 
       {/* Main Canvas Viewport with Optional CRT Scanlines */}
       <div className={`adv-viewport ${scanlines ? 'has-scanlines' : ''}`}>
-        <canvas ref={canvasRef} className="adv-canvas" />
+        <canvas ref={canvasRef} className="adv-canvas" tabIndex={0} aria-label="Project Odyssey game. Use W A S D or arrow keys to move, and E to examine a shrine." />
 
         {/* Floating Quick Action Overlay Button if near a shrine */}
         {nearShrine && (
@@ -139,10 +145,10 @@ export const AdventureGameApp: React.FC = () => {
         <div className="adv-virtual-controls">
           <div className="adv-dpad-row">
             <button
-              onMouseDown={() => engineRef.current?.moveVirtual('up', true)}
-              onMouseUp={() => engineRef.current?.moveVirtual('up', false)}
-              onTouchStart={() => engineRef.current?.moveVirtual('up', true)}
-              onTouchEnd={() => engineRef.current?.moveVirtual('up', false)}
+              onPointerDown={(event) => { event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); engineRef.current?.moveVirtual('up', true); }}
+              onPointerUp={() => engineRef.current?.moveVirtual('up', false)}
+              onPointerCancel={() => engineRef.current?.moveVirtual('up', false)}
+              onLostPointerCapture={() => engineRef.current?.moveVirtual('up', false)}
               className="adv-dpad-btn adv-dpad-up"
               aria-label="Move Up"
             >
@@ -151,30 +157,30 @@ export const AdventureGameApp: React.FC = () => {
           </div>
           <div className="adv-dpad-row">
             <button
-              onMouseDown={() => engineRef.current?.moveVirtual('left', true)}
-              onMouseUp={() => engineRef.current?.moveVirtual('left', false)}
-              onTouchStart={() => engineRef.current?.moveVirtual('left', true)}
-              onTouchEnd={() => engineRef.current?.moveVirtual('left', false)}
+              onPointerDown={(event) => { event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); engineRef.current?.moveVirtual('left', true); }}
+              onPointerUp={() => engineRef.current?.moveVirtual('left', false)}
+              onPointerCancel={() => engineRef.current?.moveVirtual('left', false)}
+              onLostPointerCapture={() => engineRef.current?.moveVirtual('left', false)}
               className="adv-dpad-btn"
               aria-label="Move Left"
             >
               ◀
             </button>
             <button
-              onMouseDown={() => engineRef.current?.moveVirtual('down', true)}
-              onMouseUp={() => engineRef.current?.moveVirtual('down', false)}
-              onTouchStart={() => engineRef.current?.moveVirtual('down', true)}
-              onTouchEnd={() => engineRef.current?.moveVirtual('down', false)}
+              onPointerDown={(event) => { event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); engineRef.current?.moveVirtual('down', true); }}
+              onPointerUp={() => engineRef.current?.moveVirtual('down', false)}
+              onPointerCancel={() => engineRef.current?.moveVirtual('down', false)}
+              onLostPointerCapture={() => engineRef.current?.moveVirtual('down', false)}
               className="adv-dpad-btn"
               aria-label="Move Down"
             >
               ▼
             </button>
             <button
-              onMouseDown={() => engineRef.current?.moveVirtual('right', true)}
-              onMouseUp={() => engineRef.current?.moveVirtual('right', false)}
-              onTouchStart={() => engineRef.current?.moveVirtual('right', true)}
-              onTouchEnd={() => engineRef.current?.moveVirtual('right', false)}
+              onPointerDown={(event) => { event.preventDefault(); event.currentTarget.setPointerCapture(event.pointerId); engineRef.current?.moveVirtual('right', true); }}
+              onPointerUp={() => engineRef.current?.moveVirtual('right', false)}
+              onPointerCancel={() => engineRef.current?.moveVirtual('right', false)}
+              onLostPointerCapture={() => engineRef.current?.moveVirtual('right', false)}
               className="adv-dpad-btn"
               aria-label="Move Right"
             >
@@ -194,7 +200,17 @@ export const AdventureGameApp: React.FC = () => {
       {/* Interactive Project Milestone Dialogue Modal */}
       {activeModalShrine && (
         <div className="adv-modal-backdrop" onClick={() => setActiveModalShrine(null)}>
-          <div className="adv-dialogue-modal" onClick={(e) => e.stopPropagation()}>
+          <div ref={dialogRef} className="adv-dialogue-modal" role="dialog" aria-modal="true" aria-labelledby="adventure-dialog-title" tabIndex={-1}
+            onClick={(e) => e.stopPropagation()}
+            onKeyDown={(event) => {
+              if (event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); setActiveModalShrine(null); }
+              if (event.key !== 'Tab') return;
+              const controls = Array.from(event.currentTarget.querySelectorAll<HTMLElement>('button, a[href]'));
+              const first = controls[0];
+              const last = controls.at(-1);
+              if (event.shiftKey && (document.activeElement === first || document.activeElement === event.currentTarget)) { event.preventDefault(); last?.focus(); }
+              else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+            }}>
             {/* Modal Header */}
             <div
               className="adv-modal-header"
@@ -205,7 +221,7 @@ export const AdventureGameApp: React.FC = () => {
                   <span>{activeModalShrine.glyph}</span>
                   <span>{activeModalShrine.name}</span>
                 </div>
-                <h3 className="adv-modal-title">{activeModalShrine.title}</h3>
+                <h3 className="adv-modal-title" id="adventure-dialog-title">{activeModalShrine.title}</h3>
               </div>
 
               <button
@@ -227,7 +243,9 @@ export const AdventureGameApp: React.FC = () => {
                   {activeModalShrine.npcName}{' '}
                   <span className="adv-npc-role">[{activeModalShrine.npcRole}]</span>
                 </div>
-                <p className="adv-npc-quote">{activeModalShrine.npcQuote}</p>
+                <p className="adv-npc-quote">{!activeProject && discoveredIds.filter((id) => id.startsWith('shrine-')).length < 5
+                  ? 'There are five project shrines to explore. Each holds a different software system.'
+                  : activeModalShrine.npcQuote}</p>
               </div>
             </div>
 
@@ -305,9 +323,9 @@ export const AdventureGameApp: React.FC = () => {
             ) : (
               <div className="adv-project-body">
                 <p style={{ fontSize: 13.5, color: '#e2e8f0', lineHeight: 1.6 }}>
-                  Congratulations, traveler! You have navigated Arthur's software engineering domain and
-                  unlocked all 5 milestone projects. Ready to connect and build practical, scalable
-                  digital experiences together?
+                  {discoveredIds.filter((id) => id.startsWith('shrine-')).length === 5
+                    ? "You've discovered all five projects. Ready to build something useful together?"
+                    : "Explore the shrines to discover Arthur's projects, or take a look at his resume and terminal below."}
                 </p>
 
                 <div className="adv-modal-actions" style={{ marginTop: 18 }}>

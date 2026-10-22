@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 
 export function useSoundEffects(enabled: boolean = false) {
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -95,5 +95,6 @@ export function useSoundEffects(enabled: boolean = false) {
     playBeep(520, 'sine', 0.08, 0.04);
   }, [playBeep]);
 
-  return { playClick, playWindowOpen, playWindowClose, playToggle };
+  return useMemo(() => ({ playClick, playWindowOpen, playWindowClose, playToggle }),
+    [playClick, playWindowOpen, playWindowClose, playToggle]);
 }

@@ -1,267 +1,138 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  Terminal,
-  Code2,
-  FolderGit2,
-  Cpu,
-  UserCheck,
-  FileText,
-  Clock,
-  Sparkles,
-  Briefcase,
-  Volume2,
-  VolumeX,
-  Gamepad2,
-} from 'lucide-react';
+﻿import { useState, useEffect, useRef, type KeyboardEvent } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { Terminal, Code2, FolderGit2, Cpu, UserRound, FileText, Monitor, ArrowUpRight, Volume2, VolumeX, Gamepad2, MousePointer2 } from 'lucide-react';
 import { useOS } from '../../context/OSContext';
 import { useMode } from '../../context/ModeContext';
 import type { WindowId } from '../../types/os';
 import { profileData } from '../../data/profile';
+import profileImg from '../../assets/profile.png';
 
-interface WindowConfig {
-  id: WindowId;
-  label: string;
-  icon: React.ReactNode;
-}
+const apps = [
+  { id: 'projects', label: 'My Projects', subtitle: 'Browse the work', icon: FolderGit2 },
+  { id: 'terminal', label: 'Command Prompt', subtitle: 'Explore with commands', icon: Terminal },
+  { id: 'ide', label: 'Code Studio', subtitle: 'Read project source', icon: Code2 },
+  { id: 'adventure', label: 'Adventure.exe', subtitle: 'Play the project odyssey', icon: Gamepad2 },
+  { id: 'skills', label: 'Tech Stack', subtitle: 'Tools and capabilities', icon: Cpu },
+  { id: 'resume', label: 'Curriculum Vitae', subtitle: 'Background and experience', icon: FileText },
+] as const;
+const allApps = [...apps, { id: 'about', label: 'About Arthur', subtitle: 'System properties', icon: UserRound }] as const;
 
-const windowConfigs: WindowConfig[] = [
-  { id: 'adventure', label: 'Adventure.exe', icon: <Gamepad2 size={15} color="#ffd700" /> },
-  { id: 'terminal', label: 'Terminal CLI', icon: <Terminal size={15} color="#2ed573" /> },
-  { id: 'ide', label: 'Code Studio IDE', icon: <Code2 size={15} color="#00d2ff" /> },
-  { id: 'projects', label: 'Projects Explorer', icon: <FolderGit2 size={15} color="#ffa502" /> },
-  { id: 'skills', label: 'Tech Stack Matrix', icon: <Cpu size={15} color="#ff5299" /> },
-  { id: 'about', label: 'System Profiler', icon: <UserCheck size={15} color="#8338ec" /> },
-  { id: 'resume', label: 'Arthur_CV.pdf', icon: <FileText size={15} color="#0055ea" /> },
-];
-
-export const Taskbar: React.FC = () => {
-  const { windows, activeWindowId, openWindow, focusWindow, minimizeWindow } = useOS();
-  const { setMode, soundEnabled, toggleSound, sounds } = useMode();
-  const [startMenuOpen, setStartMenuOpen] = useState<boolean>(false);
-  const [time, setTime] = useState<string>('');
-  const menuRef = useRef<HTMLDivElement | null>(null);
+export function Taskbar() {
+  const { windows, activeWindowId, openWindow, focusWindow, minimizeWindow, toggleDesktop } = useOS();
+  const { setMode, soundEnabled, toggleSound, cursorEnabled, toggleCursor, sounds } = useMode();
+  const reducedMotion = useReducedMotion();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [clock, setClock] = useState(() => new Date());
+  const menuRef = useRef<HTMLDivElement>(null);
+  const startRef = useRef<HTMLButtonElement>(null);
+  const visibleWindows = Object.values(windows).some((win) => win.isOpen && !win.isMinimized);
 
   useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setTime(
-        now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-      );
-    };
-    updateTime();
-    const interval = setInterval(updateTime, 1000);
-    return () => clearInterval(interval);
+    const timer = setInterval(() => setClock(new Date()), 30000);
+    return () => clearInterval(timer);
   }, []);
-
-  // Close start menu when clicking outside
   useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        const startBtn = document.querySelector('.xp-start-btn');
-        if (startBtn && startBtn.contains(e.target as Node)) return;
-        setStartMenuOpen(false);
-      }
+    if (!menuOpen) return;
+    menuRef.current?.querySelector<HTMLButtonElement>('button')?.focus();
+    const outside = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (!menuRef.current?.contains(target) && !startRef.current?.contains(target)) setMenuOpen(false);
     };
-    if (startMenuOpen) {
-      window.addEventListener('mousedown', handleOutsideClick);
+    window.addEventListener('pointerdown', outside);
+    return () => window.removeEventListener('pointerdown', outside);
+  }, [menuOpen]);
+
+  function menuKeys(event: KeyboardEvent<HTMLDivElement>) {
+    if (event.key === 'Escape') {
+      event.preventDefault(); event.stopPropagation();
+      setMenuOpen(false); startRef.current?.focus(); return;
     }
-    return () => window.removeEventListener('mousedown', handleOutsideClick);
-  }, [startMenuOpen]);
-
-  const handleStartToggle = () => {
-    sounds.playClick();
-    setStartMenuOpen((prev) => !prev);
-  };
-
-  const handleTaskClick = (id: WindowId) => {
-    sounds.playClick();
-    const win = windows[id];
-    if (win.isOpen) {
-      if (win.isMinimized) {
-        openWindow(id);
-      } else if (activeWindowId === id) {
-        minimizeWindow(id);
-      } else {
-        focusWindow(id);
-      }
-    } else {
-      openWindow(id);
-    }
-  };
-
-  const handleLaunchApp = (id: WindowId) => {
-    sounds.playClick();
-    setStartMenuOpen(false);
-    openWindow(id);
-  };
+    if (!['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    const buttons = Array.from(menuRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)') ?? []);
+    const index = buttons.indexOf(document.activeElement as HTMLButtonElement);
+    const next = event.key === 'Home' ? 0 : event.key === 'End' ? buttons.length - 1 :
+      (index + (event.key === 'ArrowDown' ? 1 : -1) + buttons.length) % buttons.length;
+    buttons[next]?.focus();
+  }
+  function launch(id: WindowId) { setMenuOpen(false); openWindow(id); }
+  function taskClick(id: WindowId) {
+    if (activeWindowId === id && !windows[id].isMinimized) minimizeWindow(id);
+    else if (windows[id].isMinimized) openWindow(id);
+    else focusWindow(id);
+  }
 
   return (
     <>
-      {/* Windows XP Start Menu */}
-      {startMenuOpen && (
-        <div ref={menuRef} className="xp-start-menu">
-          {/* Header */}
+      <AnimatePresence>
+        {menuOpen && <motion.div ref={menuRef} id="os-start-menu" className="xp-start-menu" role="dialog"
+          aria-label="Start menu" onKeyDown={menuKeys}
+          onBlur={(event) => {
+            if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget as Node) && event.relatedTarget !== startRef.current) setMenuOpen(false);
+          }}
+          initial={reducedMotion ? false : { opacity: 0, y: 8, scale: 0.985 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: reducedMotion ? 0 : 6 }}
+          transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 380, damping: 34 }}>
           <div className="xp-menu-header">
-            <div className="xp-menu-avatar">AC</div>
-            <div>
-              <div className="xp-menu-name">{profileData.name}</div>
-              <div style={{ fontSize: 11.5, color: '#e0f2fe', fontWeight: 600 }}>
-                {profileData.title}
-              </div>
-            </div>
+            <img src={profileImg} alt="" className="xp-menu-avatar" width={44} height={44} />
+            <div><div className="xp-menu-name">{profileData.name}</div><p className="xp-menu-role">{profileData.title}</p></div>
           </div>
-
-          {/* Dual-column body */}
           <div className="xp-menu-body">
-            {/* Left Column: Pinned Programs */}
             <div className="xp-menu-left">
-              <span style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', paddingLeft: 8 }}>
-                Programs
-              </span>
-              <div
-                className="xp-menu-item"
-                style={{ background: '#fef3c7', border: '1px solid #fcd34d' }}
-                onClick={() => handleLaunchApp('adventure')}
-              >
-                <Gamepad2 size={18} color="#d97706" />
-                <span style={{ fontWeight: 700, color: '#92400e' }}>Adventure.exe (Quest)</span>
-                <span
-                  style={{
-                    marginLeft: 'auto',
-                    fontSize: 9,
-                    fontWeight: 800,
-                    background: '#f59e0b',
-                    color: '#ffffff',
-                    padding: '2px 5px',
-                    borderRadius: 3,
-                  }}
-                >
-                  NEW
-                </span>
-              </div>
-              <div className="xp-menu-item" onClick={() => handleLaunchApp('terminal')}>
-                <Terminal size={18} color="#2ed573" />
-                <span>Command Prompt (CLI)</span>
-              </div>
-              <div className="xp-menu-item" onClick={() => handleLaunchApp('ide')}>
-                <Code2 size={18} color="#00d2ff" />
-                <span>Code Studio IDE</span>
-              </div>
-              <div className="xp-menu-item" onClick={() => handleLaunchApp('projects')}>
-                <FolderGit2 size={18} color="#ffa502" />
-                <span>My Projects</span>
-              </div>
-              <div className="xp-menu-item" onClick={() => handleLaunchApp('skills')}>
-                <Cpu size={18} color="#ff5299" />
-                <span>Tech Stack Matrix</span>
-              </div>
-              <div className="xp-menu-item" onClick={() => handleLaunchApp('resume')}>
-                <FileText size={18} color="#0055ea" />
-                <span>Curriculum Vitae</span>
-              </div>
+              <p className="xp-menu-section-label">Programs</p>
+              {apps.map(({ id, label, subtitle, icon: Icon }) => (
+                <button key={id} className="xp-menu-item" onClick={() => launch(id)}>
+                  <Icon size={22} strokeWidth={1.6} />
+                  <span><strong>{label}</strong><small>{subtitle}</small></span>
+                </button>
+              ))}
             </div>
-
-            {/* Right Column: Places & Settings */}
             <div className="xp-menu-right">
-              <span style={{ fontSize: 11, fontWeight: 800, color: '#1e3a8a', textTransform: 'uppercase', paddingLeft: 8 }}>
-                System & Info
-              </span>
-              <div className="xp-menu-item" onClick={() => handleLaunchApp('about')}>
-                <UserCheck size={16} color="#0036ab" />
-                <span>System Profiler</span>
-              </div>
-              <div
-                className="xp-menu-item"
-                onClick={() => {
-                  toggleSound();
-                  sounds.playClick();
-                }}
-              >
-                {soundEnabled ? <Volume2 size={16} color="#0036ab" /> : <VolumeX size={16} color="#0036ab" />}
-                <span>Sound: {soundEnabled ? 'ON' : 'OFF'}</span>
-              </div>
-              <div
-                className="xp-menu-item"
-                onClick={() => {
-                  setStartMenuOpen(false);
-                  setMode('executive');
-                }}
-                style={{ marginTop: 'auto', background: '#ffcf24', border: '1.5px solid #192038', color: '#192038' }}
-              >
-                <Briefcase size={16} color="#192038" />
-                <span>Executive View</span>
-              </div>
+              <p className="xp-menu-section-label">My computer</p>
+              <button className="xp-menu-item" onClick={() => launch('about')}><UserRound size={18} /> About Arthur</button>
+              <button className="xp-menu-item" onClick={() => { setMenuOpen(false); toggleDesktop(); }}><Monitor size={18} /> Show desktop</button>
+              <p className="xp-menu-section-label xp-menu-settings-label">Preferences</p>
+              <button className="xp-menu-item" onClick={toggleSound} aria-pressed={soundEnabled}>
+                {soundEnabled ? <Volume2 size={18} /> : <VolumeX size={18} />}<span>Sound <small>{soundEnabled ? 'On' : 'Off'}</small></span>
+              </button>
+              <button className="xp-menu-item" onClick={toggleCursor} aria-pressed={cursorEnabled}>
+                <MousePointer2 size={18} /><span>Pixel cursor <small>{cursorEnabled ? 'On' : 'Off'}</small></span>
+              </button>
             </div>
           </div>
-
-          {/* Footer */}
           <div className="xp-menu-footer">
-            <button
-              onClick={() => {
-                setStartMenuOpen(false);
-                setMode('executive');
-              }}
-              className="xp-menu-logoff-btn"
-            >
-              <Sparkles size={14} color="#ffcf24" />
-              <span>Switch to Recruiter View</span>
+            <button className="xp-menu-logoff-btn" onClick={() => { setMenuOpen(false); setMode('executive'); }}>
+              Executive View <ArrowUpRight size={15} />
             </button>
           </div>
-        </div>
-      )}
-
-      {/* Windows XP Bottom Taskbar */}
-      <div className="xp-taskbar">
-        {/* Iconic Green Start Button */}
-        <button
-          onClick={handleStartToggle}
-          className={`xp-start-btn ${startMenuOpen ? 'is-active' : ''}`}
-          aria-label="Windows XP Start"
-        >
-          <div className="xp-flag">
-            <span className="xp-flag-red" />
-            <span className="xp-flag-green" />
-            <span className="xp-flag-blue" />
-            <span className="xp-flag-yellow" />
-          </div>
+        </motion.div>}
+      </AnimatePresence>
+      <footer className="xp-taskbar" aria-label="Desktop taskbar">
+        <button ref={startRef} onClick={() => { sounds.playClick(); setMenuOpen((current) => !current); }}
+          className={`xp-start-btn${menuOpen ? ' is-active' : ''}`} aria-label="Start" aria-expanded={menuOpen} aria-controls="os-start-menu">
+          <span className="xp-flag" aria-hidden="true"><span className="xp-flag-red" /><span className="xp-flag-green" /><span className="xp-flag-blue" /><span className="xp-flag-yellow" /></span>
           <span className="xp-start-text">start</span>
         </button>
-
-        {/* Task Tabs for Open Windows */}
-        <div className="xp-task-tabs">
-          {windowConfigs.map((cfg) => {
-            const win = windows[cfg.id];
-            if (!win.isOpen) return null;
-
-            const isActive = activeWindowId === cfg.id && !win.isMinimized;
-
-            return (
-              <button
-                key={cfg.id}
-                onClick={() => handleTaskClick(cfg.id)}
-                className={`xp-task-tab ${isActive ? 'is-active' : ''}`}
-                title={win.title}
-              >
-                {cfg.icon}
-                <span>{cfg.label}</span>
-              </button>
-            );
-          })}
+        <div className="xp-quick-launch">
+          <button onClick={toggleDesktop} aria-label={visibleWindows ? 'Show desktop' : 'Restore windows'} title={visibleWindows ? 'Show desktop' : 'Restore windows'}><Monitor size={17} /></button>
         </div>
-
-        {/* System Tray & Clock */}
+        <nav className="xp-task-tabs" aria-label="Open applications">
+          {allApps.filter((app) => windows[app.id].isOpen).map(({ id, label, icon: Icon }) => (
+            <button key={id} onClick={() => taskClick(id)} className={`xp-task-tab${activeWindowId === id && !windows[id].isMinimized ? ' is-active' : ''}`}
+              aria-pressed={activeWindowId === id && !windows[id].isMinimized} aria-controls={`os-window-${id}`} title={label}>
+              <Icon size={15} /><span>{label}</span>
+            </button>
+          ))}
+        </nav>
         <div className="xp-tray">
-          <button
-            onClick={toggleSound}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-            title={soundEnabled ? 'Mute audio' : 'Enable audio'}
-          >
-            {soundEnabled ? <Volume2 size={15} color="#ffffff" /> : <VolumeX size={15} color="#cbd5e1" />}
+          <button onClick={toggleSound} title={soundEnabled ? 'Mute sound' : 'Enable sound'} aria-label={soundEnabled ? 'Mute sound' : 'Enable sound'} aria-pressed={soundEnabled}>
+            {soundEnabled ? <Volume2 size={17} /> : <VolumeX size={17} />}
           </button>
-          <Clock size={14} color="#ffffff" />
-          <span className="xp-clock">{time}</span>
+          <time className="xp-clock" dateTime={clock.toISOString()} title={clock.toLocaleDateString(undefined, { dateStyle: 'full' })}>
+            {clock.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </time>
         </div>
-      </div>
+      </footer>
     </>
   );
-};
+}

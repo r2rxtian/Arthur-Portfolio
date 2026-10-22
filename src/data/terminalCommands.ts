@@ -3,10 +3,12 @@ import { experienceData } from './experience';
 import { skillCategoriesData } from './skills';
 import { profileData } from './profile';
 import { virtualFileSystem } from './filesystem';
+import type { WindowId } from '../types/os';
 
 export interface TerminalContext {
   setMode: (mode: 'technical' | 'executive') => void;
-  openWindow: (id: any) => void;
+  openWindow: (id: WindowId) => void;
+  inspectProject: (projectId: string) => void;
   clearHistory: () => void;
   setTerminalTheme?: (theme: string) => void;
 }
@@ -38,12 +40,13 @@ export const executeTerminalCommand = (
   contact            - View email, GitHub, LinkedIn, and scheduling links
   cat <filepath>     - Print the contents of a virtual file (e.g. cat /README.md)
   ls [path]          - List files and directories in the virtual filesystem
-  open <app>         - Launch OS window: [ide | projects | about | resume]
+  open <tool>        - Open projects, source, terminal, playroom, skills, resume, about
+  inspect <project>  - Read an implementation (e.g. inspect itms, inspect dochubpr)
   mode <type>        - Switch perspective: [executive | technical]
   clear              - Clear terminal display
-  date               - Print current server time and timezone
+  date               - Print your local date and time
   echo <message>     - Print text to standard output
-  matrix             - Toggle cyberpunk matrix mode
+  matrix             - A message from the other side
   sudo <command>     - Attempt privileged operation`,
       };
 
@@ -67,7 +70,8 @@ Bio: ${profileData.technicalPitch}`,
     Tagline: ${p.tagline}
     Stack:   ${p.technical.techStack.join(', ')}
     Impact:  ${p.executive.quantifiableImpact[0]}
-    GitHub:  ${p.links.github || 'N/A'}`
+    GitHub:  ${p.links.github || 'N/A'}
+    Inspect: inspect ${p.id}`
             )
             .join('\n\n') +
           `\n\nTip: Type "open ide" to inspect project source code!`,
@@ -156,16 +160,27 @@ You can also switch to Executive mode to use the one-click recruiter actions.`,
       return { output: `cat: ${filePath}: No such file or directory`, isError: true };
     }
 
+    case 'inspect': {
+      const name = args.join(' ').trim().toLowerCase();
+      const project = name ? projectsData.find((candidate) => candidate.id === name || candidate.title.toLowerCase().startsWith(name)) : undefined;
+      if (!project) return { output: `Usage: inspect <project>\nProjects: ${projectsData.map((candidate) => candidate.id).join(', ')}`, isError: true };
+      context.inspectProject(project.id);
+      return { output: `Opening ${project.title} source...` };
+    }
+
     case 'open': {
       const app = args[0]?.toLowerCase();
       if (!app) {
-        return { output: 'open: please specify an application (ide, projects, about, resume)', isError: true };
+        return { output: 'open: specify an application (ide, projects, about, resume, skills, adventure)', isError: true };
       }
-      if (['ide', 'projects', 'about', 'resume'].includes(app)) {
-        context.openWindow(app);
+      const aliases: Record<string, WindowId> = { source: 'ide', code: 'ide', playroom: 'adventure', capabilities: 'skills' };
+      const target = aliases[app] ?? app;
+      const applications: WindowId[] = ['ide', 'projects', 'terminal', 'about', 'resume', 'skills', 'adventure'];
+      if (applications.includes(target as WindowId)) {
+        context.openWindow(target as WindowId);
         return { output: `Launching ${app.toUpperCase()}...` };
       }
-      return { output: `open: unknown application '${app}'. Try: ide, projects, about, resume`, isError: true };
+      return { output: `open: unknown application '${app}'. Try: ${applications.join(', ')}`, isError: true };
     }
 
     case 'mode': {

@@ -1,5 +1,6 @@
-import React from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
+﻿import { useEffect, useState } from 'react';
+import { MotionConfig } from 'framer-motion';
+import { ArrowUpRight, Moon, Sun } from 'lucide-react';
 import { HeroSection } from './HeroSection';
 import { WorkSection } from './WorkSection';
 import { CertificatesSection } from './CertificatesSection';
@@ -7,83 +8,73 @@ import { ExperienceSection } from './ExperienceSection';
 import { SkillsSection } from './SkillsSection';
 import { ContactSection } from './ContactSection';
 import { profileData } from '../../data/profile';
-import { Mail, Sparkles } from 'lucide-react';
 
-export const ExecutiveLayout: React.FC = () => {
-  const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 180,
-    damping: 28,
-    restDelta: 0.001,
+const navigation = [
+  ['overview', 'Overview'], ['work', 'Work'], ['certificates', 'Certificates'],
+  ['experience', 'Experience'], ['skills', 'Skills'],
+] as const;
+
+export function ExecutiveLayout() {
+  const [activeSection, setActiveSection] = useState('overview');
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('executive_theme');
+    if (saved === 'light' || saved === 'dark') return saved;
+    return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
+  useEffect(() => {
+    document.documentElement.dataset.executiveTheme = theme;
+    localStorage.setItem('executive_theme', theme);
+    return () => { delete document.documentElement.dataset.executiveTheme; };
+  }, [theme]);
+
+  useEffect(() => {
+    // Update React only when the active section changes, never on every scroll frame.
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) setActiveSection(entry.target.id);
+      }
+    }, { rootMargin: '-15% 0px -65% 0px' });
+    document.querySelectorAll('.exec-container section[id]').forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="exec-container">
-      {/* Dynamic Scroll Progress Bar */}
-      <motion.div
-        className="exec-scroll-progress"
-        style={{ scaleX }}
-        aria-hidden="true"
-      />
-
-      <div className="exec-ambient-glow" />
-
-      {/* Sticky Top Header */}
-      <header className="exec-header">
-        <div className="exec-nav-inner">
-          <a href="#overview" className="exec-logo">
-            <div className="exec-logo-icon">
-              <Sparkles size={16} color="#38bdf8" />
+    <MotionConfig reducedMotion="user" transition={{ type: 'spring', stiffness: 170, damping: 28, mass: 1 }}>
+      <div className="exec-container" data-theme={theme}>
+        <a className="exec-skip-link" href="#executive-main">Skip to content</a>
+        <header className="exec-header">
+          <div className="exec-nav-inner">
+            <a href="#overview" className="exec-logo">{profileData.name}<span className="exec-logo-period">.</span></a>
+            <nav className="exec-nav-links" aria-label="Portfolio sections">
+              {navigation.map(([id, label]) => (
+                <a key={id} href={`#${id}`} className="exec-nav-link" aria-current={activeSection === id ? 'location' : undefined}>
+                  {label}
+                </a>
+              ))}
+            </nav>
+            <div className="exec-header-actions">
+              <button className="exec-icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`}>
+                {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+              </button>
+              <a href="#contact" className="exec-nav-cta">Contact <ArrowUpRight size={14} /></a>
             </div>
-            <span>{profileData.name}</span>
-            <span className="exec-logo-badge">ENGINEER</span>
-          </a>
-
-          <nav className="exec-nav-links">
-            <a href="#overview" className="exec-nav-link">
-              Overview
-            </a>
-            <a href="#work" className="exec-nav-link">
-              Work
-            </a>
-            <a href="#certificates" className="exec-nav-link">
-              Certificates
-            </a>
-            <a href="#experience" className="exec-nav-link">
-              Experience
-            </a>
-            <a href="#skills" className="exec-nav-link">
-              Skills
-            </a>
-          </nav>
-
-          <a
-            href="#contact"
-            className="exec-nav-cta"
-          >
-            <Mail size={14} />
-            <span>Contact</span>
-          </a>
-        </div>
-      </header>
-
-      {/* Page Body */}
-      <main className="exec-content">
-        <HeroSection />
-        <WorkSection />
-        <CertificatesSection />
-        <ExperienceSection />
-        <SkillsSection />
-        <ContactSection />
-
-        <footer className="exec-footer">
-          <div className="exec-footer-inner">
-            <span>© {new Date().getFullYear()} {profileData.name}. All rights reserved.</span>
-            <span className="exec-footer-tag">Dual-Perspective Portfolio • React 19 + TypeScript + Motion Engine</span>
           </div>
+        </header>
+        <main className="exec-content" id="executive-main">
+          <HeroSection />
+          <WorkSection />
+          <CertificatesSection />
+          <ExperienceSection />
+          <SkillsSection />
+          <ContactSection />
+        </main>
+        <footer className="exec-footer">
+          <span>© {new Date().getFullYear()} {profileData.name}</span>
+          <a href="#overview">Back to top <ArrowUpRight size={14} /></a>
         </footer>
-      </main>
-    </div>
+      </div>
+    </MotionConfig>
   );
-};
-
+}

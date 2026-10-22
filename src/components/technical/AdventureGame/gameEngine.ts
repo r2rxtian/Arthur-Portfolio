@@ -17,6 +17,8 @@ export class AdventureGameEngine {
 
   private isRunning: boolean = false;
   private rafId: number = 0;
+  private inputEnabled = false;
+  private resizeObserver: ResizeObserver;
 
   // World dimensions
   private readonly tileSize = 32;
@@ -75,6 +77,8 @@ export class AdventureGameEngine {
     this.onDiscover = opts.onDiscover;
 
     this.bindEvents();
+    this.resizeObserver = new ResizeObserver(this.resize);
+    if (this.canvas.parentElement) this.resizeObserver.observe(this.canvas.parentElement);
   }
 
   public start() {
@@ -92,9 +96,18 @@ export class AdventureGameEngine {
   public destroy() {
     this.stop();
     this.unbindEvents();
+    this.resizeObserver.disconnect();
+  }
+
+  public setActive(active: boolean) {
+    this.inputEnabled = active;
+    this.keys = {};
+    if (active) this.start();
+    else this.stop();
   }
 
   public triggerInteract() {
+    if (!this.inputEnabled) return;
     if (this.currentNearShrine) {
       this.discoveredShrines.add(this.currentNearShrine.id);
       this.onDiscover(this.currentNearShrine.id);
@@ -108,6 +121,7 @@ export class AdventureGameEngine {
   }
 
   public moveVirtual(direction: 'up' | 'down' | 'left' | 'right', active: boolean) {
+    if (!this.inputEnabled) return;
     if (direction === 'up') this.keys['ArrowUp'] = active;
     if (direction === 'down') this.keys['ArrowDown'] = active;
     if (direction === 'left') this.keys['ArrowLeft'] = active;
@@ -118,17 +132,22 @@ export class AdventureGameEngine {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
     window.addEventListener('resize', this.resize);
+    window.addEventListener('blur', this.clearInput);
   }
 
   private unbindEvents() {
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
     window.removeEventListener('resize', this.resize);
+    window.removeEventListener('blur', this.clearInput);
   }
 
+  private clearInput = () => { this.keys = {}; };
+
   private handleKeyDown = (e: KeyboardEvent) => {
-    // Only capture if game window is active
+    if (!this.inputEnabled || e.repeat || (e.target as HTMLElement)?.closest('input, textarea, select, button, [contenteditable="true"]')) return;
     if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD'].includes(e.code)) {
+      e.preventDefault();
       this.keys[e.code] = true;
     }
 

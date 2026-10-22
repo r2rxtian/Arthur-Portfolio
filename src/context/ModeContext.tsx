@@ -10,6 +10,8 @@ interface ModeContextType {
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
   toggleSound: () => void;
+  cursorEnabled: boolean;
+  toggleCursor: () => void;
   sounds: ReturnType<typeof useSoundEffects>;
 }
 
@@ -32,9 +34,17 @@ export const ModeProvider: React.FC<{ children: React.ReactNode }> = ({ children
   });
 
   const sounds = useSoundEffects(soundEnabled);
+  const [cursorEnabled, setCursorEnabled] = useState(() => localStorage.getItem('portfolio_cursor') === 'true');
+  const toggleCursor = () => setCursorEnabled((current) => !current);
+
+  useEffect(() => {
+    localStorage.setItem('portfolio_cursor', String(cursorEnabled));
+    document.documentElement.dataset.customCursor = String(cursorEnabled);
+  }, [cursorEnabled]);
 
   useEffect(() => {
     localStorage.setItem('portfolio_mode', mode);
+    document.documentElement.dataset.portfolioMode = mode;
   }, [mode]);
 
   useEffect(() => {
@@ -68,6 +78,8 @@ export const ModeProvider: React.FC<{ children: React.ReactNode }> = ({ children
         soundEnabled,
         setSoundEnabled,
         toggleSound,
+        cursorEnabled,
+        toggleCursor,
         sounds,
       }}
     >

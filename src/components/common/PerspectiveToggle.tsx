@@ -1,15 +1,16 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Terminal, Briefcase, Volume2, VolumeX, Sparkles } from 'lucide-react';
+import { motion, useReducedMotion } from 'framer-motion';
+import { Terminal, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { useMode } from '../../context/ModeContext';
 
 export const PerspectiveToggle: React.FC = () => {
   const { mode, toggleMode, soundEnabled, toggleSound } = useMode();
+  const reducedMotion = useReducedMotion();
 
   const isTech = mode === 'technical';
 
   return (
-    <div className="perspective-toggle-wrapper">
+    <div className={`perspective-toggle-wrapper${isTech ? '' : ' is-executive'}`}>
       <button
         onClick={toggleSound}
         className={`sound-toggle-btn ${soundEnabled ? 'active' : ''}`}
@@ -22,8 +23,9 @@ export const PerspectiveToggle: React.FC = () => {
       <motion.button
         onClick={toggleMode}
         className="perspective-toggle"
-        whileHover={{ scale: 1.03 }}
-        whileTap={{ scale: 0.97 }}
+        aria-label={isTech ? 'Switch to Executive View' : 'Switch to ArthurOS'}
+        whileHover={reducedMotion ? undefined : { scale: isTech ? 1.03 : 1.015 }}
+        whileTap={reducedMotion ? undefined : { scale: 0.98 }}
         title="Toggle Portfolio View Mode"
       >
         <span className="perspective-label">
@@ -32,19 +34,19 @@ export const PerspectiveToggle: React.FC = () => {
         </span>
 
         <motion.div
-          layout
+          layout={!reducedMotion}
           className={`perspective-badge ${isTech ? '' : 'exec'}`}
-          transition={{ type: 'spring', stiffness: 500, damping: 30 }}
+          transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 240, damping: 28 }}
         >
           {isTech ? (
             <>
               <Terminal size={13} />
-              <span>Technical OS</span>
+              <span>ArthurOS</span>
             </>
           ) : (
             <>
-              <Briefcase size={13} />
-              <span>Executive View</span>
+              <Terminal size={13} />
+              <span>ArthurOS</span>
             </>
           )}
         </motion.div>

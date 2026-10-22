@@ -1,141 +1,84 @@
-import React, { useState } from 'react';
-import { Copy, Check, Calendar, Download, Sparkles, Send } from 'lucide-react';
-import { GithubIcon, LinkedinIcon } from '../common/Icons';
+﻿import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight, Check, Copy, Download } from 'lucide-react';
 import { profileData } from '../../data/profile';
 import { experienceData } from '../../data/experience';
 import { ScrollReveal } from './ScrollReveal';
 
-export const ContactSection: React.FC = () => {
+export function ContactSection() {
+  const [feedback, setFeedback] = useState('');
   const [copied, setCopied] = useState(false);
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (feedbackTimer.current) clearTimeout(feedbackTimer.current); }, []);
 
-  const handleCopyEmail = () => {
-    navigator.clipboard.writeText(profileData.contact.email);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2500);
-  };
+  function showFeedback(message: string) {
+    if (feedbackTimer.current) clearTimeout(feedbackTimer.current);
+    setFeedback(message);
+    feedbackTimer.current = setTimeout(() => { setFeedback(''); setCopied(false); }, 3000);
+  }
 
-  const handleDownloadCV = () => {
-    const cvText = `=====================================================
-${profileData.name.toUpperCase()} - ${profileData.title.toUpperCase()}
-Email: ${profileData.contact.email} | LinkedIn: ${profileData.contact.linkedin} | GitHub: ${profileData.contact.github}
-Location: ${profileData.location} | Status: ${profileData.status}
-=====================================================
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(profileData.contact.email);
+      setCopied(true);
+      showFeedback('Email address copied.');
+    } catch {
+      setCopied(false);
+      showFeedback('Copy unavailable. Select the email address to copy it.');
+    }
+  }
 
-EXECUTIVE SUMMARY:
-${profileData.executivePitch}
-
-CAREER TIMELINE:
-${experienceData
-  .map(
-    (exp) => `
-* ${exp.role} @ ${exp.company} (${exp.period})
-  Location: ${exp.location}
-  Summary: ${exp.summary}
-  Highlights:
-  ${exp.highlights.map((h) => `  - ${h}`).join('\n')}
-  Stack: ${exp.skillsUsed.join(', ')}
-`
-  )
-  .join('\n')}
-`;
-
-    const blob = new Blob([cvText], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = profileData.contact.resumeFileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  function downloadCV() {
+    const cv = [
+      profileData.name, profileData.title,
+      `Email: ${profileData.contact.email}`,
+      `GitHub: ${profileData.contact.github}`,
+      `LinkedIn: ${profileData.contact.linkedin}`,
+      '', profileData.executivePitch, '', 'EXPERIENCE', '',
+      ...experienceData.flatMap((experience) => [
+        `${experience.role} at ${experience.company} (${experience.period})`,
+        experience.summary, ...experience.highlights.map((highlight) => `- ${highlight}`), '',
+      ]),
+    ].join('\n');
+    const url = URL.createObjectURL(new Blob([cv], { type: 'text/plain;charset=utf-8' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = profileData.contact.resumeFileName.replace(/\.pdf$/i, '.txt');
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    showFeedback('CV download started.');
+  }
 
   return (
-    <section className="exec-section" id="contact">
-      <ScrollReveal direction="up" distance={32}>
-        <div className="exec-contact-card">
-          <div className="exec-contact-glow-top" />
-
-          <div className="exec-section-eyebrow" style={{ marginBottom: 4 }}>
-            <span className="exec-num-accent">05</span>
-            <span className="exec-eyebrow-divider">//</span>
-            <span>INITIATE DIALOGUE</span>
-          </div>
-
-          <h2 className="exec-contact-title">Let's Discuss High-Impact Engineering Roles</h2>
-          <p className="exec-contact-desc">
-            Seeking opportunities to design, build, and scale practical software solutions — combining full-stack web development, cloud architectures, and user-focused product delivery.
-          </p>
-
-          <div className="exec-contact-actions">
-            <button
-              onClick={handleCopyEmail}
-              className="exec-btn exec-btn-primary"
-              title="Copy email address to clipboard"
-            >
-              {copied ? <Check size={16} color="#34d399" /> : <Copy size={16} />}
-              <span>{copied ? 'Email Copied to Clipboard!' : 'Copy Email Address'}</span>
-            </button>
-
-            <a
-              href={`mailto:${profileData.contact.email}?subject=Software%20Engineering%20Opportunity%20-%20Arthur%20Christian`}
-              className="exec-btn exec-btn-secondary"
-            >
-              <Send size={15} color="#38bdf8" />
-              <span>Direct Email</span>
-            </a>
-
-            {profileData.contact.meetingUrl && (
-              <a
-                href={profileData.contact.meetingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="exec-btn exec-btn-secondary"
-              >
-                <Calendar size={16} color="#818cf8" />
-                <span>Schedule 20-min Intro</span>
-              </a>
-            )}
-
-            <button
-              onClick={handleDownloadCV}
-              className="exec-btn exec-btn-secondary"
-            >
-              <Download size={16} color="#34d399" />
-              <span>Download Executive CV</span>
-            </button>
-          </div>
-
-          <div className="exec-contact-footer-links">
-            <a
-              href={profileData.contact.github}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="exec-contact-link"
-            >
-              <GithubIcon size={16} />
-              <span>GitHub ({profileData.handle})</span>
-            </a>
-
-            <a
-              href={profileData.contact.linkedin}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="exec-contact-link"
-            >
-              <LinkedinIcon size={16} color="#38bdf8" />
-              <span>LinkedIn Profile</span>
-            </a>
-
-            <div className="exec-contact-status-chip">
-              <span className="exec-status-dot" />
-              <Sparkles size={12} color="#34d399" />
-              <span>{profileData.status}</span>
-            </div>
-          </div>
+    <section className="exec-section exec-contact" id="contact" aria-labelledby="contact-heading">
+      <ScrollReveal>
+        <p className="exec-contact-label">Have something in mind?</p>
+        <h2 id="contact-heading">Good work starts with<br />a conversation<span>.</span></h2>
+        <p className="exec-contact-description">I'm open to software engineering roles and thoughtful collaborations. Let's build something useful together.</p>
+        <div className="exec-contact-actions">
+          <motion.a href={`mailto:${profileData.contact.email}?subject=Software%20Engineering%20Opportunity`}
+            className="exec-btn exec-btn-primary" whileTap={{ scale: 0.97 }}>
+            Get in touch <ArrowUpRight size={16} />
+          </motion.a>
+          <motion.button className="exec-btn exec-btn-secondary" onClick={downloadCV} whileTap={{ scale: 0.97 }}>
+            <Download size={16} /> Download CV
+          </motion.button>
+        </div>
+        <div className="exec-contact-email">
+          <a href={`mailto:${profileData.contact.email}`}>{profileData.contact.email}</a>
+          <button className="exec-icon-button" onClick={() => void copyEmail()} aria-label="Copy email address">
+            {copied ? <Check size={16} /> : <Copy size={16} />}
+          </button>
+        </div>
+        <p className="exec-feedback" role="status">{feedback}</p>
+        <div className="exec-contact-links">
+          <a href={profileData.contact.github} target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={14} /></a>
+          <a href={profileData.contact.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn <ArrowUpRight size={14} /></a>
+          {profileData.contact.meetingUrl && <a href={profileData.contact.meetingUrl} target="_blank" rel="noopener noreferrer">Schedule an intro <ArrowUpRight size={14} /></a>}
         </div>
       </ScrollReveal>
     </section>
   );
-};
-
+}

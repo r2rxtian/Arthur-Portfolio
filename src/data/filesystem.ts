@@ -15,14 +15,16 @@ export const virtualFileSystem: VirtualFile[] = [
 - **Specialization**: Full-stack web development, scalable systems, AI integration, automation, and cloud technologies.
 - **Philosophy**: Turning ideas into functional digital experiences through practical, scalable solutions.
 - **Modes**:
-  - **Technical Mode**: Interactive OS desktop simulation, terminal CLI, and embedded code IDE.
+  - **ArthurOS**: An engineering workbench with connected project overviews, architecture diagrams, source excerpts, a terminal, and a playroom.
   - **Executive Mode**: Curated case studies with business problems, strategic solutions, and impact metrics.
 
 ## Quick CLI Shortcuts
 - Type \`help\` to explore all terminal commands.
 - Type \`projects\` to list repositories with stats.
 - Type \`cat /README.md\` to view this file in terminal.
-- Click the floating badge in the bottom-right to switch to Executive view.
+- Type \`inspect itms\` to open the StockHub implementation in the workspace.
+- Press Ctrl+K to find a project or tool.
+- Use the Executive view button in the workspace header to switch perspectives.
 `,
   },
   {
