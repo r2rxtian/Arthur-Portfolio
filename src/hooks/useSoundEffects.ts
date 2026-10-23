@@ -95,6 +95,6 @@ export function useSoundEffects(enabled: boolean = false) {
     playBeep(520, 'sine', 0.08, 0.04);
   }, [playBeep]);
 
-  return useMemo(() => ({ playClick, playWindowOpen, playWindowClose, playToggle }),
-    [playClick, playWindowOpen, playWindowClose, playToggle]);
+  return useMemo(() => ({ playBeep, playClick, playWindowOpen, playWindowClose, playToggle }),
+    [playBeep, playClick, playWindowOpen, playWindowClose, playToggle]);
 }

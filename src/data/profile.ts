@@ -1,44 +1,39 @@
 import type { Profile } from '../types/portfolio';
+import { projectsData } from './projects';
+import { certificatesData } from './certificates';
 
 export const profileData: Profile = {
-  name: 'Arthur Christian',
+  name: 'Arthur Christian Mendoza David',
+  shortName: 'Arthur Christian',
   handle: 'r2rxtian',
-  title: 'Full-Stack Software Engineer',
+  title: 'Intern System Developer',
   executivePitch:
-    'BS Computer Science graduate passionate about designing and developing practical, scalable solutions — combining full-stack development, AI integration, automation, cloud technologies, and user-focused system design.',
+    'Computer Science student at Holy Angel University and Intern System Developer at La Rose Noire Philippines, building practical software and developing skills in problem-solving, automation, and system improvement.',
   technicalPitch:
-    'BS Computer Science graduate and full-stack engineer passionate about designing and developing practical, scalable solutions — combining full-stack development, AI integration, automation, cloud technologies, and user-focused system design.',
-  status: 'Open for Software Engineering Opportunities',
-  availability: 'Immediate (Full-Time or Strategic Advisory)',
-  location: 'Remote / Global',
-  yearsOfExperience: '6+',
+    'I build web applications and automation tools with JavaScript, TypeScript, PHP, Python, and SQL. As an Intern System Developer at La Rose Noire Philippines, I am gaining professional experience while completing my BS in Computer Science at Holy Angel University.',
+  status: 'Open to software development opportunities',
+  availability: 'Currently an Intern System Developer',
+  location: 'Magalang, Pampanga, Philippines',
+  yearsOfExperience: 'Internship since July 2026',
+  education: {
+    institution: 'Holy Angel University (HAU)',
+    degree: 'Bachelor of Science in Computer Science',
+    expectedCompletion: 'November 20, 2026',
+    field: 'Computer Science / Information Technology',
+  },
+  languages: ['Filipino', 'English'],
   metrics: [
-    {
-      label: 'Production Systems',
-      value: '15+',
-      subtext: 'Built & maintained globally',
-    },
-    {
-      label: 'Performance Uplift',
-      value: '4.8x',
-      subtext: 'Average latency reduction',
-    },
-    {
-      label: 'Active Users Served',
-      value: '2.4M+',
-      subtext: 'Across high-scale platforms',
-    },
-    {
-      label: 'Service Availability',
-      value: '99.99%',
-      subtext: 'SLO adherence across services',
-    },
+    { label: 'Portfolio projects', value: String(projectsData.length), subtext: 'Web applications and automation' },
+    { label: 'Certifications', value: String(certificatesData.length), subtext: 'Web development and networking' },
+    { label: 'Internship started', value: 'Jul 2026', subtext: 'La Rose Noire Philippines' },
+    { label: 'Graduation', value: 'Nov 2026', subtext: 'Holy Angel University' },
   ],
   contact: {
-    email: 'arthur.engineer@example.com',
+    email: 'arthurchristiand@gmail.com',
+    phone: '09773326123',
     github: 'https://github.com/r2rxtian',
     linkedin: 'https://www.linkedin.com/in/arthur-christian-david-3974b0425',
-    resumeFileName: 'Arthur_Christian_CV.pdf',
-    meetingUrl: 'https://cal.com/arthur-dev',
+    resumeLink: 'http://acdavid.jobs180.com',
+    resumeFileName: 'Arthur_Christian_Mendoza_David_CV.txt',
   },
 };

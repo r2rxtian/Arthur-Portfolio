@@ -1,0 +1,200 @@
+/* ArthurOS motion & depth layer: loaded after workbench.css and builds on its tokens. */
+.wb-project-tabs button[aria-selected='true']::after { display: none; }
+.wb-tab-indicator { position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; border-radius: 2px; background: var(--wb-accent); box-shadow: 0 0 12px var(--wb-accent); }
+
+.wb-main { position: relative; isolation: isolate; }
+.wb-main::before {
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: radial-gradient(color-mix(in srgb, var(--wb-muted) 22%, transparent) 1px, transparent 1px);
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 80% 60% at 70% 0%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 70% 0%, #000 0%, transparent 75%);
+}
+.wb-context-bar { background: transparent; }
+.wb-lens { min-height: 100%; }
+/* Stable wrapper the momentum scroller measures; in source mode it passes the flex layout through. */
+.wb-panel-content { min-height: 100%; }
+.wb-project-workspace.is-source .wb-panel-content { display: flex; flex: 1; min-width: 0; min-height: 0; }
+/* The panel receives focus programmatically on load; keep its ring quiet but present. */
+.wb-project-panel:focus-visible { outline: 1px solid var(--wb-line); outline-offset: -1px; }
+.wb-project-workspace.is-source .wb-lens { display: flex; flex: 1; min-width: 0; min-height: 0; }
+.wb-step { margin-right: 9px; font: 10px/1 var(--font-mono); color: var(--wb-accent); }
+.wb-project-intro h2 { font-size: clamp(22px, 2.2vw, 30px); }
+.wb-project-title-row h1 { font-size: 27px; letter-spacing: -0.045em; }
+
+/* Interactive feel: every control answers hover and press. */
+.wb-button, .wb-small-button, .wb-command-trigger, .wb-executive-link, .wb-icon-button, .wb-inline-action {
+  transition: background 220ms ease, border-color 220ms ease, color 220ms ease, transform 420ms var(--wb-ease), box-shadow 420ms var(--wb-ease);
+}
+.wb-button:active, .wb-small-button:active, .wb-command-trigger:active, .wb-executive-link:active, .wb-icon-button:active, .wb-rail-button:active { transform: scale(0.96); }
+.wb-button-primary:hover { transform: translateY(-1px); box-shadow: 0 10px 26px -12px var(--wb-accent); opacity: 1; }
+.wb-rail-button { transition: color 180ms ease, transform 300ms var(--wb-ease); }
+.wb-rail-button > svg { transition: transform 400ms var(--wb-ease); }
+.wb-rail-button:hover > svg { transform: translateY(-2px); }
+.wb-brand-mark { transition: transform 600ms var(--wb-ease); }
+.wb-brand:hover .wb-brand-mark { transform: rotate(-12deg) scale(1.06); }
+.wb-availability i { animation: wb-pulse 2.4s ease-out infinite; }
+@keyframes wb-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--wb-accent) 60%, transparent); }
+  100% { box-shadow: 0 0 0 7px transparent; }
+}
+
+/* Project navigator: a shared selection slides between entries. */
+.wb-project-item { position: relative; isolation: isolate; transition: background 200ms ease, color 200ms ease; }
+.wb-project-item > svg, .wb-project-item > span:not(.wb-project-selection) { position: relative; z-index: 1; }
+.wb-project-item[aria-current] { background: transparent; border-color: transparent; }
+.wb-project-selection { position: absolute; inset: 0; z-index: 0; border-radius: 8px; background: var(--wb-accent-soft); box-shadow: inset 0 0 0 1px var(--wb-line), inset 2px 0 0 var(--wb-accent); }
+
+/* Architecture: packets travel along the wires between layers. */
+.wb-flow-node { position: relative; isolation: isolate; overflow: hidden; }
+.wb-flow-node > *:not(.wb-flow-node-glow) { position: relative; z-index: 1; }
+.wb-flow-node[aria-pressed='true'] { background: var(--wb-panel); }
+.wb-flow-node-glow {
+  position: absolute; inset: 0; z-index: 0; border-radius: inherit;
+  background: radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--wb-accent) 22%, transparent), transparent 70%), var(--wb-accent-soft);
+  box-shadow: inset 0 0 0 1px var(--wb-accent);
+}
+.wb-flow-connector { display: flex; align-items: center; justify-content: center; width: 28px; right: -28px; }
+.wb-flow-connector > svg { display: none !important; }
+.wb-flow-wire { position: relative; display: block; width: 100%; height: 2px; border-radius: 2px; background: var(--wb-line); overflow: hidden; }
+.wb-flow-wire > i { position: absolute; top: 0; left: -40%; width: 40%; height: 100%; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--wb-accent)); animation: wb-packet 1.8s cubic-bezier(0.45, 0, 0.2, 1) infinite; }
+.wb-flow-wire > i:last-child { animation-delay: 0.9s; }
+@keyframes wb-packet { to { left: 100%; } }
+@keyframes wb-packet-down { to { top: 100%; } }
+
+/* Source viewer: syntax colors and a quick line-by-line type-in. */
+.wb-root { --tok-comment: #6f8586; --tok-string: #c7d99a; --tok-keyword: #97d3be; --tok-function: #8fc1f0; --tok-variable: #e6b98a; --tok-number: #e3a3c6; --tok-type: #d7c6f2; }
+.wb-root[data-theme='light'] { --tok-comment: #7d8c84; --tok-string: #4f7a1f; --tok-keyword: #1f6b52; --tok-function: #2463a8; --tok-variable: #a05a14; --tok-number: #a63d79; --tok-type: #6247a8; }
+.tok-comment { color: var(--tok-comment); font-style: italic; }
+.tok-string { color: var(--tok-string); }
+.tok-keyword { color: var(--tok-keyword); }
+.tok-function { color: var(--tok-function); }
+.tok-variable { color: var(--tok-variable); }
+.tok-number { color: var(--tok-number); }
+.tok-type { color: var(--tok-type); }
+.wb-source-code pre { padding-right: 0; }
+.wb-code-line { display: block; min-height: 1.9em; padding-right: 24px; animation: wb-line-in 420ms var(--wb-ease) both; }
+.wb-code-line:hover { background: color-mix(in srgb, var(--wb-accent) 7%, transparent); }
+@keyframes wb-line-in { from { opacity: 0; transform: translateX(-6px); } to { opacity: 1; transform: none; } }
+.wb-source { box-shadow: 0 30px 60px -40px rgba(0, 0, 0, 0.45); }
+.wb-source-dots { display: inline-flex; gap: 5px; margin-right: 6px; }
+.wb-source-dots > i { width: 9px; height: 9px; border-radius: 50%; }
+.wb-source-dots > i:nth-child(1) { background: #e0796f; }
+.wb-source-dots > i:nth-child(2) { background: #e3c06b; }
+.wb-source-dots > i:nth-child(3) { background: #7cc39a; }
+.wb-copy-icon { display: inline-flex; }
+.wb-small-button.is-done { color: var(--wb-accent); border-color: var(--wb-accent); }
+
+/* Inspector and command palette. */
+.wb-inspector-stack li { display: flex; align-items: center; gap: 9px; }
+.wb-inspector-stack i { width: 5px; height: 5px; border-radius: 2px; background: var(--wb-accent); opacity: 0.7; }
+.wb-command-option { position: relative; isolation: isolate; }
+.wb-command-option[aria-selected='true'] { background: transparent; }
+.wb-command-option > *:not(.wb-command-highlight) { position: relative; z-index: 1; }
+.wb-command-highlight { position: absolute; inset: 0; z-index: 0; border-radius: 7px; background: var(--wb-accent-soft); box-shadow: inset 2px 0 0 var(--wb-accent); }
+.wb-command-dialog::backdrop { backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+
+/* Panes replay their entrance each time they are revealed (leaving display: none restarts CSS animations). */
+.wb-overview, .wb-architecture, .wb-command-sheet { animation: none; }
+.wb-utility-pane:not([hidden]) .wb-utility-content { animation: wb-pane-enter 520ms var(--wb-ease) both; }
+@keyframes wb-pane-enter {
+  from { opacity: 0; transform: translateY(12px) scale(0.995); filter: blur(3px); }
+  to { opacity: 1; transform: none; filter: none; }
+}
+
+/* Playroom: a two-game switcher above whichever game is active. */
+.playroom { display: flex; flex-direction: column; flex: 1; min-height: 0; height: 100%; }
+.playroom-tabs { display: flex; gap: 6px; padding: 8px; border-bottom: 1px solid var(--wb-line); background: var(--wb-panel); flex-shrink: 0; overflow-x: auto; scrollbar-width: none; }
+.playroom-tabs::-webkit-scrollbar { display: none; }
+.playroom-tab {
+  position: relative; isolation: isolate; display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  min-height: 38px; padding: 7px 14px; border: 0; border-radius: 8px; background: transparent; color: var(--wb-secondary);
+  font-size: 12px !important; transition: color 200ms ease;
+}
+.playroom-tab > *:not(.playroom-tab-selection) { position: relative; z-index: 1; }
+.playroom-tab small { font-size: 10px; color: var(--wb-muted); }
+.playroom-tab:hover, .playroom-tab[aria-selected='true'] { color: var(--wb-text); }
+.playroom-tab[aria-selected='true'] > svg { color: var(--wb-accent); }
+.playroom-tab-selection { position: absolute; inset: 0; z-index: 0; border-radius: 8px; background: var(--wb-canvas); box-shadow: inset 0 0 0 1px var(--wb-line); }
+.playroom-stage { position: relative; display: flex; flex-direction: column; flex: 1; min-height: 0; overflow: hidden; }
+.playroom-stage > * { flex: 1; min-height: 0; }
+@media (max-width: 639px) {
+  .playroom-tab small { display: none; }
+}
+
+/* Boot sequence. */
+.wb-boot { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; background: #0d1416; color: #e5ecea; cursor: pointer; }
+.wb-boot::before {
+  content: ''; position: absolute; inset: 0;
+  background-image: radial-gradient(rgba(151, 211, 190, 0.12) 1px, transparent 1px); background-size: 22px 22px;
+  mask-image: radial-gradient(circle at 50% 45%, #000, transparent 60%);
+  -webkit-mask-image: radial-gradient(circle at 50% 45%, #000, transparent 60%);
+}
+.wb-boot-inner { position: relative; display: flex; flex-direction: column; align-items: center; width: min(420px, calc(100vw - 48px)); }
+.wb-boot-mark { display: grid; place-items: center; width: 56px; height: 56px; padding-bottom: 7px; border-radius: 16px; background: #97d3be; color: #152c24; font: 600 46px/1 var(--font-sans); letter-spacing: -0.07em; box-shadow: 0 0 60px -10px #97d3be; }
+.wb-boot-title { margin-top: 18px; font: 500 26px/1 var(--font-sans); letter-spacing: -0.05em; }
+.wb-boot-title span { color: #91a4a5; font-weight: 400; }
+.wb-boot-log { list-style: none; align-self: stretch; min-height: 118px; margin-top: 30px; font: 11px/2 var(--font-mono); color: #a2b4b4; }
+.wb-boot-log li { display: flex; gap: 10px; white-space: nowrap; overflow: hidden; }
+.wb-boot-ok { color: #97d3be; }
+.wb-boot-progress { align-self: stretch; height: 2px; margin-top: 14px; border-radius: 2px; background: #2d393e; overflow: hidden; }
+.wb-boot-progress > span { display: block; height: 100%; background: #97d3be; transform-origin: 0 50%; transform: scaleX(0); }
+.wb-boot-hint { margin-top: 16px; font: 10px/1 var(--font-mono); color: #6f8586; }
+
+@media (max-width: 1023px) {
+  .wb-flow-connector { width: 22px; right: -22px; }
+}
+
+/* ---------- Narrow screens: overlays must not inherit desktop grid placement ----------
+ * An absolutely positioned grid child that keeps a grid-column from the desktop layout uses
+ * that (possibly implicit, zero-width) column as its containing block. That is what shoved the
+ * project drawer off the right edge and shifted the selected-layer glow on phones. */
+.wb-flow-node > .wb-flow-node-glow { grid-column: auto; grid-row: auto; }
+/* The search wrapper already shows focus (:focus-within), so the input itself doesn't draw a second ring. */
+.wb-project-search input:focus-visible { outline: none; }
+.wb-project-search:focus-within { box-shadow: 0 0 0 3px color-mix(in srgb, var(--wb-accent) 22%, transparent); }
+.wb-inspector-shade { display: none; }
+@media (max-width: 1279px) {
+  .wb-inspector { grid-column: auto; grid-row: auto; }
+  .wb-inspector-shade { display: block; position: absolute; inset: 0; z-index: 19; border: 0; background: rgba(4, 12, 13, 0.35); animation: wb-fade-in 300ms ease both; }
+}
+@media (max-width: 899px) {
+  .wb-project-nav { grid-column: auto; grid-row: auto; }
+  .wb-root.is-navigation-open .wb-project-nav { animation: wb-drawer-in 420ms var(--wb-ease) both; }
+  .wb-navigation-shade { animation: wb-fade-in 300ms ease both; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
+}
+@keyframes wb-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes wb-drawer-in { from { transform: translateX(-24px); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes wb-sheet-in { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+/* Phones: bottom tab bar respects the home indicator, the project list is a full-height drawer,
+ * and the project brief becomes a bottom sheet. */
+@media (max-width: 639px) {
+  .wb-root { --wb-rail-h: calc(64px + env(safe-area-inset-bottom)); }
+  .wb-body, .wb-root.has-inspector .wb-body { grid-template-rows: minmax(0, 1fr) var(--wb-rail-h); }
+  .wb-app-rail { padding-bottom: calc(5px + env(safe-area-inset-bottom)); }
+  .wb-rail-button { -webkit-user-select: none; user-select: none; }
+  .wb-project-nav { top: 0; left: 0; bottom: var(--wb-rail-h); width: min(320px, 86vw); max-width: none; border-radius: 0 18px 18px 0; }
+  .wb-navigation-shade { inset: 0 0 var(--wb-rail-h); }
+  .wb-project-item { min-height: 64px; }
+  .wb-inspector {
+    top: auto; left: 0; right: 0; bottom: var(--wb-rail-h); width: auto; max-height: 78%;
+    border-left: 0; border-top: 1px solid var(--wb-line); border-radius: 18px 18px 0 0;
+    box-shadow: 0 -20px 50px rgba(3, 12, 13, 0.35);
+  }
+  .wb-inspector::before { content: ''; display: block; width: 40px; height: 4px; margin: 8px auto 0; border-radius: 4px; background: var(--wb-line); flex-shrink: 0; }
+  .wb-inspector-shade { inset: 0 0 var(--wb-rail-h); }
+  .wb-context-bar { gap: 8px; }
+  .wb-context-bar > div > span:first-of-type { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .wb-command-dialog { top: 8vh; }
+}
+@media (max-width: 639px) {
+  .wb-flow-connector { width: 2px; height: 24px; right: auto; left: 29px; top: auto; bottom: -24px; }
+  .wb-flow-wire { width: 2px; height: 100%; }
+  .wb-flow-wire > i { left: 0; top: -40%; width: 100%; height: 40%; background: linear-gradient(180deg, transparent, var(--wb-accent)); animation-name: wb-packet-down; }
+  .wb-project-title-row h1 { font-size: 22px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wb-flow-wire > i { display: none; }
+  .wb-root *, .wb-boot * { animation: none !important; }
+}

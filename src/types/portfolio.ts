@@ -42,7 +42,7 @@ export interface Experience {
 
 export interface SkillItem {
   name: string;
-  level: 'Expert' | 'Advanced' | 'Proficient';
+  level?: 'Expert' | 'Advanced' | 'Proficient';
   category: string;
   highlight?: boolean;
 }
@@ -56,6 +56,7 @@ export interface SkillCategory {
 
 export interface Profile {
   name: string;
+  shortName: string;
   handle: string;
   title: string;
   executivePitch: string;
@@ -64,6 +65,8 @@ export interface Profile {
   availability: string;
   location: string;
   yearsOfExperience: string;
+  education: { institution: string; degree: string; expectedCompletion: string; field: string };
+  languages: string[];
   metrics: Array<{
     label: string;
     value: string;
@@ -73,6 +76,8 @@ export interface Profile {
     email: string;
     github: string;
     linkedin: string;
+    phone: string;
+    resumeLink: string;
     resumeFileName: string;
     meetingUrl?: string;
   };
@@ -82,12 +87,12 @@ export interface Certificate {
   id: string;
   title: string;
   issuer: string;
-  issuerCode: 'AWS' | 'GCP' | 'CNCF' | 'META' | 'MONGO' | 'HASHICORP' | 'SECURITY';
+  issuerCode: 'FCC' | 'CISCO';
   issueDate: string;
-  expiryDate: string;
-  credentialId: string;
-  credentialUrl: string;
-  category: 'Cloud & Architecture' | 'DevOps & Containers' | 'Full-Stack & Frontend' | 'Security & Data';
+  expiryDate?: string;
+  credentialId?: string;
+  credentialUrl?: string;
+  category: 'Web Development' | 'Networking';
   summary: string;
   skills: string[];
   gradient: string;

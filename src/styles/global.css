@@ -150,3 +150,32 @@ pre {
   border-color: rgba(56, 189, 248, 0.4);
 }
 
+
+/* Momentum scrolling (hooks/useMomentum.ts): Lenis drives every frame itself, so CSS smooth
+   scrolling must be off wherever it is active or each frame would be smoothed twice and lag. */
+html.lenis, .lenis.lenis-smooth { scroll-behavior: auto !important; }
+
+/* Theme changes reveal through a growing circle (see utils/themeTransition.ts). */
+::view-transition-old(root),
+::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+
+/* Mode switch curtain: covers the screen while one view hands over to the other. */
+.mode-curtain {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  background: #0f1517;
+  color: #e5ecea;
+  pointer-events: all;
+}
+.mode-curtain.is-executive { background: #f3f1ec; color: #191815; }
+.mode-curtain-copy { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.mode-curtain-copy strong { font: 500 clamp(40px, 7vw, 88px)/1 var(--font-sans); letter-spacing: -0.06em; }
+.mode-curtain.is-executive .mode-curtain-copy strong { font-family: var(--font-serif); font-style: italic; font-weight: 400; letter-spacing: -0.02em; }
+.mode-curtain-copy span { font: 12px/1.4 var(--font-mono); opacity: 0.6; }
+.mode-curtain-bar { position: relative; display: block; width: 160px; height: 2px; border-radius: 2px; overflow: hidden; background: rgba(127, 140, 141, 0.25); }
+.mode-curtain-bar::after { content: ''; position: absolute; inset: 0; background: #97d3be; transform-origin: 0 50%; animation: mode-curtain-load 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards; }
+.mode-curtain.is-executive .mode-curtain-bar::after { background: #2a44d4; }
+@keyframes mode-curtain-load { from { transform: scaleX(0); } to { transform: scaleX(1); } }

@@ -243,8 +243,8 @@ export const AdventureGameApp: React.FC = () => {
                   {activeModalShrine.npcName}{' '}
                   <span className="adv-npc-role">[{activeModalShrine.npcRole}]</span>
                 </div>
-                <p className="adv-npc-quote">{!activeProject && discoveredIds.filter((id) => id.startsWith('shrine-')).length < 5
-                  ? 'There are five project shrines to explore. Each holds a different software system.'
+                <p className="adv-npc-quote">{!activeProject && discoveredIds.filter((id) => id.startsWith('shrine-')).length < shrinesData.filter((shrine) => shrine.projectId).length
+                  ? `There are ${shrinesData.filter((shrine) => shrine.projectId).length} project shrines to explore. Each holds a different software system.`
                   : activeModalShrine.npcQuote}</p>
               </div>
             </div>
@@ -258,7 +258,7 @@ export const AdventureGameApp: React.FC = () => {
                 </div>
 
                 <div className="adv-impact-section">
-                  <span className="adv-body-subtitle">Verified Impact:</span>
+                  <span className="adv-body-subtitle">Project outcomes:</span>
                   <ul className="adv-impact-list">
                     {activeProject.executive.quantifiableImpact.map((item, idx) => (
                       <li key={idx}>
@@ -282,10 +282,10 @@ export const AdventureGameApp: React.FC = () => {
                   <button
                     onClick={handleInspectProjectInIDE}
                     className="adv-btn adv-btn-primary"
-                    title="Inspect source code in Code Studio IDE"
+                    title="Inspect source code in the workspace"
                   >
                     <Code2 size={15} />
-                    <span>Open in Code Studio IDE</span>
+                    <span>Inspect source</span>
                   </button>
 
                   {activeProject.links.demo && (
@@ -323,8 +323,8 @@ export const AdventureGameApp: React.FC = () => {
             ) : (
               <div className="adv-project-body">
                 <p style={{ fontSize: 13.5, color: '#e2e8f0', lineHeight: 1.6 }}>
-                  {discoveredIds.filter((id) => id.startsWith('shrine-')).length === 5
-                    ? "You've discovered all five projects. Ready to build something useful together?"
+                  {discoveredIds.filter((id) => id.startsWith('shrine-')).length === shrinesData.filter((shrine) => shrine.projectId).length
+                    ? "You've discovered every project. Ready to build something useful together?"
                     : "Explore the shrines to discover Arthur's projects, or take a look at his resume and terminal below."}
                 </p>
 

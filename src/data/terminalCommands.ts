@@ -55,14 +55,15 @@ export const executeTerminalCommand = (
         output: `${profileData.name} — ${profileData.title}
 Status: ${profileData.status}
 Location: ${profileData.location}
-Experience: ${profileData.yearsOfExperience} in Production Systems
+Experience: ${profileData.yearsOfExperience}
+Education: ${profileData.education.degree}, ${profileData.education.institution} (expected ${profileData.education.expectedCompletion})
 
 Bio: ${profileData.technicalPitch}`,
       };
 
     case 'projects':
       return {
-        output: `=== FEATURED PRODUCTION PROJECTS ===\n` +
+        output: `=== PORTFOLIO PROJECTS ===\n` +
           projectsData
             .map(
               (p, i) =>
@@ -84,7 +85,7 @@ Bio: ${profileData.technicalPitch}`,
             .map(
               (cat) =>
                 `[${cat.title}]
-  ${cat.items.map((item) => `${item.name} (${item.level})`).join('  |  ')}`
+  ${cat.items.map((item) => item.name).join('  |  ')}`
             )
             .join('\n\n'),
       };
@@ -106,9 +107,10 @@ Bio: ${profileData.technicalPitch}`,
       return {
         output: `Arthur's Contact Information:
   Email:    ${profileData.contact.email}
+  Mobile:   ${profileData.contact.phone}
   GitHub:   ${profileData.contact.github}
   LinkedIn: ${profileData.contact.linkedin}
-  Schedule: ${profileData.contact.meetingUrl}
+  Resume:   ${profileData.contact.resumeLink}
 
 You can also switch to Executive mode to use the one-click recruiter actions.`,
       };

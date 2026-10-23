@@ -1,16 +1,36 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Terminal, Volume2, VolumeX, Sparkles } from 'lucide-react';
 import { useMode } from '../../context/ModeContext';
+
+/** Hides the switch while the reader scrolls down and brings it back on scroll up or near the top/bottom. */
+function useTucked(enabled: boolean) {
+  const [tucked, setTucked] = useState(false);
+  useEffect(() => {
+    if (!enabled) return;
+    let last = window.scrollY;
+    const onScroll = () => {
+      const current = window.scrollY;
+      const nearEnd = current + innerHeight >= document.documentElement.scrollHeight - 120;
+      const next = current > 240 && current > last + 4 && !nearEnd ? true : current < last - 4 || current < 240 || nearEnd ? false : null;
+      if (next !== null) setTucked(next);
+      last = current;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [enabled]);
+  return tucked;
+}
 
 export const PerspectiveToggle: React.FC = () => {
   const { mode, toggleMode, soundEnabled, toggleSound } = useMode();
   const reducedMotion = useReducedMotion();
 
   const isTech = mode === 'technical';
+  const tucked = useTucked(!isTech);
 
   return (
-    <div className={`perspective-toggle-wrapper${isTech ? '' : ' is-executive'}`}>
+    <div className={`perspective-toggle-wrapper${isTech ? '' : ' is-executive'}${tucked ? ' is-tucked' : ''}`}>
       <button
         onClick={toggleSound}
         className={`sound-toggle-btn ${soundEnabled ? 'active' : ''}`}
@@ -38,17 +58,8 @@ export const PerspectiveToggle: React.FC = () => {
           className={`perspective-badge ${isTech ? '' : 'exec'}`}
           transition={reducedMotion ? { duration: 0 } : { type: 'spring', stiffness: 240, damping: 28 }}
         >
-          {isTech ? (
-            <>
-              <Terminal size={13} />
-              <span>ArthurOS</span>
-            </>
-          ) : (
-            <>
-              <Terminal size={13} />
-              <span>ArthurOS</span>
-            </>
-          )}
+          <Terminal size={13} />
+          <span className="perspective-badge-text">ArthurOS</span>
         </motion.div>
       </motion.button>
     </div>

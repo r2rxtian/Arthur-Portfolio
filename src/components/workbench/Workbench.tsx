@@ -11,10 +11,15 @@ import { ProjectWorkspace, type ProjectLens } from './ProjectWorkspace';
 import { ProjectInspector } from './ProjectInspector';
 import { CommandPalette } from './CommandPalette';
 import { presentationFor } from './workbenchData';
+import { BootSequence } from './BootSequence';
+import { WB_EASE } from './motion';
+import { withThemeTransition } from '../../utils/themeTransition';
+import { useSelectorMomentum } from '../../hooks/useMomentum';
 import '../../styles/workbench.css';
+import '../../styles/workbench-motion.css';
 
 const TerminalApp = lazy(() => import('../technical/TerminalApp').then((module) => ({ default: module.TerminalApp })));
-const AdventureGameApp = lazy(() => import('../technical/AdventureGame/AdventureGameApp').then((module) => ({ default: module.AdventureGameApp })));
+const Playroom = lazy(() => import('../technical/Playroom').then((module) => ({ default: module.Playroom })));
 const AboutApp = lazy(() => import('../technical/AboutApp').then((module) => ({ default: module.AboutApp })));
 const ResumeApp = lazy(() => import('../technical/ResumeApp').then((module) => ({ default: module.ResumeApp })));
 const SkillsApp = lazy(() => import('../technical/SkillsApp').then((module) => ({ default: module.SkillsApp })));
@@ -29,7 +34,7 @@ const rail: { id: WindowId; label: string; icon: LucideIcon }[] = [
 ];
 const utilityPanels = [
   { id: 'terminal', label: 'Terminal', description: 'A command line for the portfolio.', component: TerminalApp },
-  { id: 'adventure', label: 'The playroom', description: 'Take a different path through the projects.', component: AdventureGameApp },
+  { id: 'adventure', label: 'The playroom', description: 'Two games, two different paths through the projects.', component: Playroom },
   { id: 'about', label: 'Meet Arthur', description: 'The person behind the projects.', component: AboutApp },
   { id: 'resume', label: 'Background & experience', description: 'A closer look at the journey.', component: ResumeApp },
   { id: 'skills', label: 'Capabilities', description: 'The tools and practices behind the work.', component: SkillsApp },
@@ -68,6 +73,8 @@ export function Workbench() {
   const lens: ProjectLens = activeApp === 'ide' ? 'source' : projectLens;
   const matchedProjects = projectsData.filter((candidate) => `${candidate.title} ${candidate.technical.techStack.join(' ')}`.toLowerCase().includes(search.trim().toLowerCase()));
   const utility = utilityPanels.find((panel) => panel.id === activeApp);
+  // Long reading panes (resume, about) glide with the same momentum as the project panel.
+  useSelectorMomentum(activeApp === 'resume' ? '.wb-utility-resume .resume-scroll' : activeApp === 'about' ? '.wb-utility-about .system-app' : null);
 
   useLayoutEffect(() => {
     document.documentElement.dataset.workspace = 'arthuros';
@@ -86,7 +93,8 @@ export function Workbench() {
     narrow.addEventListener('change', resize);
     return () => narrow.removeEventListener('change', resize);
   }, []);
-  useEffect(() => { if (navigationOpen) searchRef.current?.focus(); }, [navigationOpen]);
+  // Focus the filter only with a mouse/trackpad; on touch it would pop the keyboard over the list.
+  useEffect(() => { if (navigationOpen && matchMedia('(pointer: fine)').matches) searchRef.current?.focus(); }, [navigationOpen]);
   useEffect(() => {
     const keys = (event: KeyboardEvent) => {
       if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') { event.preventDefault(); setPaletteOpen((current) => !current); }
@@ -121,10 +129,14 @@ export function Workbench() {
           <button className="wb-brand" onClick={() => { setProjectLens('overview'); navigate('projects'); }} aria-label="ArthurOS project workspace">
             <span className="wb-brand-mark">a</span><span>arthur<span className="wb-brand-os">os</span><small>Engineering workbench</small></span>
           </button>
-          <div className="wb-header-breadcrumb"><span>Workspace</span><ChevronRight size={13} /><strong>{projectView ? 'Projects' : utility?.label ?? 'Projects'}</strong></div>
+          <div className="wb-header-breadcrumb"><span>Workspace</span><ChevronRight size={13} />
+            <motion.strong key={projectView ? 'projects' : activeApp} initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, ease: WB_EASE }}>
+              {projectView ? 'Projects' : utility?.label ?? 'Projects'}
+            </motion.strong>
+          </div>
           <div className="wb-header-actions">
             <button className="wb-command-trigger" onClick={() => setPaletteOpen(true)} aria-label="Find a project or open a tool"><Search size={15} /><span>Find anything</span><kbd>Ctrl K</kbd></button>
-            <button className="wb-icon-button wb-theme-toggle" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`}>{theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}</button>
+            <button className="wb-icon-button wb-theme-toggle" onClick={(event) => withThemeTransition(event.currentTarget, () => setTheme(theme === 'dark' ? 'light' : 'dark'))} aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`}>{theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}</button>
             <button className="wb-executive-link" onClick={() => setMode('executive')}>Executive view <ArrowUpRight size={14} /></button>
           </div>
         </header>
@@ -144,12 +156,15 @@ export function Workbench() {
           <aside className="wb-project-nav" id="wb-project-navigation" aria-label="Project navigator">
             <div className="wb-nav-heading"><h2>Projects <span>{projectsData.length}</span></h2><button className="wb-icon-button wb-nav-close" onClick={() => setNavigationOpen(false)} aria-label="Close project navigator"><X size={16} /></button></div>
             <div className="wb-project-search"><Search size={14} /><input ref={searchRef} aria-label="Filter projects" placeholder="Filter projects..." value={search} onChange={(event) => setSearch(event.target.value)} />{search && <button onClick={() => setSearch('')} aria-label="Clear project filter"><X size={13} /></button>}</div>
-            <div className="wb-project-list">{matchedProjects.map((candidate) => {
+            <div className="wb-project-list">{matchedProjects.map((candidate, index) => {
               const presentation = presentationFor(candidate.id);
               const Icon = presentation.icon;
-              return <button key={candidate.id} className="wb-project-item" title={candidate.title} aria-current={candidate.id === project.id && projectView ? 'true' : undefined} onClick={() => selectProject(candidate.id)}>
-                <Icon size={18} strokeWidth={1.5} /><span><strong>{presentation.name}</strong><small>{presentation.description}</small></span>{candidate.id === project.id && projectView && <ChevronRight size={13} />}
-              </button>;
+              const current = candidate.id === project.id && projectView;
+              return <motion.button key={candidate.id} className="wb-project-item" title={candidate.title} aria-current={current ? 'true' : undefined} onClick={() => selectProject(candidate.id)}
+                initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, ease: WB_EASE, delay: 0.15 + index * 0.05 }}>
+                {current && <motion.span className="wb-project-selection" layoutId="wb-project-selection" transition={{ type: 'spring', stiffness: 420, damping: 36 }} />}
+                <Icon size={18} strokeWidth={1.5} /><span><strong>{presentation.name}</strong><small>{presentation.description}</small></span>{current && <ChevronRight size={13} />}
+              </motion.button>;
             })}
               {matchedProjects.length === 0 && <div className="wb-project-empty"><p>No matching projects.</p><button className="wb-inline-action" onClick={() => setSearch('')}>Clear filter</button></div>}
             </div>
@@ -168,12 +183,15 @@ export function Workbench() {
               </section>
             ))}
           </main>
+          {/* On narrower screens the brief overlays the workspace; tapping outside closes it. */}
+          {projectView && inspectorOpen && <button className="wb-inspector-shade" onClick={() => setInspectorOpen(false)} aria-label="Close project brief" tabIndex={-1} />}
           {projectView && inspectorOpen && <ProjectInspector project={project} onClose={() => setInspectorOpen(false)} onSource={() => changeLens('source')} />}
         </div>
 
         <footer className="wb-status-bar"><div><span className="wb-status-mark" aria-hidden="true">a</span><span>ArthurOS</span><span className="wb-status-divider" />{projectView ? <span>{project.category}</span> : <span>{utility?.label}</span>}</div>
           <div><span className="wb-shortcut-note"><Command size={12} /> Ctrl K to navigate</span><button onClick={toggleSound} aria-label={soundEnabled ? 'Mute interface sounds' : 'Enable interface sounds'} aria-pressed={soundEnabled}>{soundEnabled ? <Volume2 size={14} /> : <VolumeX size={14} />}<span>Sound {soundEnabled ? 'on' : 'off'}</span></button></div>
         </footer>
+        <BootSequence />
         {paletteOpen && <CommandPalette onClose={() => setPaletteOpen(false)} onProject={(id) => selectProject(id, false)} onApp={navigate} onExecutive={() => setMode('executive')} />}
       </div>
     </MotionConfig>

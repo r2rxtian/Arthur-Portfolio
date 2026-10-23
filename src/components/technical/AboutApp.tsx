@@ -2,6 +2,7 @@
 import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
 import { skillCategoriesData } from '../../data/skills';
+import { certificatesData } from '../../data/certificates';
 import profileImg from '../../assets/profile.png';
 
 export function AboutApp() {
@@ -16,6 +17,8 @@ export function AboutApp() {
         <fieldset className="system-fieldset"><legend>Portfolio</legend>
           <dl className="system-specs"><div><dt>Projects</dt><dd>{projectsData.length} software systems</dd></div><div><dt>Core domains</dt><dd>{skillCategoriesData.length} engineering disciplines</dd></div><div><dt>Built with</dt><dd>React, TypeScript & Vite</dd></div><div><dt>Availability</dt><dd>{profileData.status}</dd></div></dl>
         </fieldset>
+        <fieldset className="system-fieldset"><legend>Education</legend><p>{profileData.education.degree}<br />{profileData.education.institution}<br />Expected completion: {profileData.education.expectedCompletion}</p></fieldset>
+        <fieldset className="system-fieldset"><legend>Certifications</legend>{certificatesData.map((certificate) => <p key={certificate.id}>{certificate.title}<br />{certificate.issuer} · {certificate.issueDate}{certificate.credentialUrl && <><br /><a href={certificate.credentialUrl} target="_blank" rel="noopener noreferrer">Verify credential</a></>}</p>)}</fieldset>
         <div className="system-actions">
           <a className="os-button os-button-primary" href={`mailto:${profileData.contact.email}`}><Mail size={15} /> Email Arthur</a>
           <a className="os-button" href={profileData.contact.github} target="_blank" rel="noopener noreferrer">GitHub <ArrowUpRight size={14} /></a>

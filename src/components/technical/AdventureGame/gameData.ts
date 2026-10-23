@@ -1,4 +1,5 @@
 import { projectsData } from '../../../data/projects';
+import { profileData } from '../../../data/profile';
 
 export interface ShrineMilestone {
   id: string;
@@ -18,6 +19,22 @@ export interface ShrineMilestone {
 }
 
 export const shrinesData: ShrineMilestone[] = [
+  {
+    id: 'shrine-pricelistautomation',
+    projectId: 'pricelistautomation',
+    name: 'The Pricing Workshop',
+    title: 'Price List Automation',
+    subtitle: 'Workbook Validation, Approvals & Exports',
+    x: 12,
+    y: 19,
+    color: '#97d3be',
+    glowColor: 'rgba(151, 211, 190, 0.45)',
+    glyph: '📋',
+    npcName: 'Price List Keeper',
+    npcRole: 'Approval Coordinator',
+    npcQuote: 'Validate the workbook, review price adjustments, then export the approved revision. Each step leaves an audit record.',
+    discovered: false,
+  },
   {
     id: 'shrine-itms',
     projectId: 'itms',
@@ -102,7 +119,7 @@ export const shrinesData: ShrineMilestone[] = [
     id: 'portal-citadel',
     projectId: '',
     name: 'The Grand Creator Portal',
-    title: 'Arthur Christian — Software Engineer',
+    title: `${profileData.shortName} - ${profileData.title}`,
     subtitle: 'Quest Destination & Executive Gateway',
     x: 12,
     y: 11,
@@ -110,8 +127,8 @@ export const shrinesData: ShrineMilestone[] = [
     glowColor: 'rgba(255, 215, 0, 0.6)',
     glyph: '👑',
     npcName: 'Arthur Christian',
-    npcRole: 'Full-Stack Software Engineer',
-    npcQuote: '“You have inspected all 5 production software systems! Ready to build practical, scalable digital experiences together?”',
+    npcRole: profileData.title,
+    npcQuote: `You have discovered all ${projectsData.length} portfolio projects! Ready to build something useful together?`,
     discovered: false,
   },
 ];

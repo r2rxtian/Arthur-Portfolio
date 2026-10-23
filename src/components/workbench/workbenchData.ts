@@ -1,6 +1,7 @@
-import { Box, FileStack, ScanLine, Search, Trophy } from 'lucide-react';
+import { Box, FileStack, ScanLine, Search, Tags, Trophy } from 'lucide-react';
 
 export const projectPresentation = {
+  pricelistautomation: { name: 'Price List Automation', description: 'Pricing, approvals & workbook exports', icon: Tags, kind: 'Automation system' },
   itms: { name: 'StockHub', description: 'Inventory & warehouse operations', icon: Box, kind: 'Inventory system' },
   'lost-and-found': { name: 'Lost & Found', description: 'Property recovery & matching', icon: Search, kind: 'Recovery platform' },
   'tennis-lms': { name: 'Tennis Academy', description: 'Training & player development', icon: Trophy, kind: 'Learning platform' },
@@ -12,6 +13,11 @@ export type ArchitectureLayer = 'interface' | 'application' | 'data';
 export interface ArchitectureNode { id: ArchitectureLayer; name: string; technology: string; description: string }
 
 export const projectArchitecture: Record<string, ArchitectureNode[]> = {
+  pricelistautomation: [
+    { id: 'interface', name: 'Price list workspace', technology: 'JavaScript + SheetJS + jsPDF', description: 'Users upload workbooks, edit prices by category or customer, review revisions, and export eligible lists to Excel or PDF.' },
+    { id: 'application', name: 'Import & approval workflow', technology: 'PHP 8.2', description: 'JSON endpoints enforce workbook validation, role permissions, CSRF protection, approval routing, export eligibility, and audit logging.' },
+    { id: 'data', name: 'Price lists & revisions', technology: 'SQL Server / JSON repository', description: 'Company sign-in uses SQL Server. Application repositories support SQL Server or file-locked JSON storage for versions, notifications, photos, and audit records.' },
+  ],
   itms: [
     { id: 'interface', name: 'Inventory interface', technology: 'Vite', description: 'The client presents stock, locations, and movement workflows to warehouse operators.' },
     { id: 'application', name: 'Transaction service', technology: 'Node.js + Express', description: 'Schema-validated endpoints coordinate stock changes, capacity checks, alerts, and audit records.' },

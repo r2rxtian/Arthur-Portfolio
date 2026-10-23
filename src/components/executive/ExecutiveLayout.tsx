@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
-import { MotionConfig } from 'framer-motion';
+import { MotionConfig, motion, useScroll, useSpring } from 'framer-motion';
 import { ArrowUpRight, Moon, Sun } from 'lucide-react';
 import { HeroSection } from './HeroSection';
 import { WorkSection } from './WorkSection';
@@ -7,7 +7,13 @@ import { CertificatesSection } from './CertificatesSection';
 import { ExperienceSection } from './ExperienceSection';
 import { SkillsSection } from './SkillsSection';
 import { ContactSection } from './ContactSection';
+import { TechMarquee } from './TechMarquee';
+import { EASE_OUT } from './motionUtils';
+import { Roll } from './motion';
+import { ExecCursor } from './ExecCursor';
 import { profileData } from '../../data/profile';
+import { withThemeTransition } from '../../utils/themeTransition';
+import { usePageMomentum } from '../../hooks/useMomentum';
 
 const navigation = [
   ['overview', 'Overview'], ['work', 'Work'], ['certificates', 'Certificates'],
@@ -16,11 +22,15 @@ const navigation = [
 
 export function ExecutiveLayout() {
   const [activeSection, setActiveSection] = useState('overview');
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null);
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     const saved = localStorage.getItem('executive_theme');
     if (saved === 'light' || saved === 'dark') return saved;
     return matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
+  usePageMomentum();
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 140, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
     document.documentElement.dataset.executiveTheme = theme;
@@ -39,31 +49,44 @@ export function ExecutiveLayout() {
     return () => observer.disconnect();
   }, []);
 
+  const indicator = hoveredLink ?? activeSection;
+
   return (
     <MotionConfig reducedMotion="user" transition={{ type: 'spring', stiffness: 170, damping: 28, mass: 1 }}>
       <div className="exec-container" data-theme={theme}>
+        <div className="exec-grain" aria-hidden="true" />
+        <ExecCursor />
         <a className="exec-skip-link" href="#executive-main">Skip to content</a>
-        <header className="exec-header">
+        <motion.header className="exec-header" initial={{ y: -24, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: EASE_OUT }}>
           <div className="exec-nav-inner">
-            <a href="#overview" className="exec-logo">{profileData.name}<span className="exec-logo-period">.</span></a>
-            <nav className="exec-nav-links" aria-label="Portfolio sections">
+            <a href="#overview" className="exec-logo">{profileData.shortName}<span className="exec-logo-period">.</span></a>
+            <nav className="exec-nav-links" aria-label="Portfolio sections" onPointerLeave={() => setHoveredLink(null)}>
               {navigation.map(([id, label]) => (
-                <a key={id} href={`#${id}`} className="exec-nav-link" aria-current={activeSection === id ? 'location' : undefined}>
-                  {label}
+                <a key={id} href={`#${id}`} className="exec-nav-link" aria-current={activeSection === id ? 'location' : undefined}
+                  onPointerEnter={() => setHoveredLink(id)}>
+                  {indicator === id && <motion.span className="exec-nav-pill" layoutId="exec-nav-pill"
+                    transition={{ type: 'spring', stiffness: 380, damping: 32 }} />}
+                  <Roll>{label}</Roll>
                 </a>
               ))}
             </nav>
             <div className="exec-header-actions">
-              <button className="exec-icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`}>
-                {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
-              </button>
-              <a href="#contact" className="exec-nav-cta">Contact <ArrowUpRight size={14} /></a>
+              <motion.button className="exec-icon-button" onClick={(event) => withThemeTransition(event.currentTarget, () => setTheme(theme === 'dark' ? 'light' : 'dark'))}
+                aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} appearance`} whileTap={{ scale: 0.9, rotate: -30 }}>
+                <motion.span key={theme} className="exec-theme-icon" initial={{ rotate: -90, scale: 0.4, opacity: 0 }}
+                  animate={{ rotate: 0, scale: 1, opacity: 1 }} transition={{ duration: 0.5, ease: EASE_OUT }}>
+                  {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+                </motion.span>
+              </motion.button>
+              <a href="#contact" className="exec-nav-cta"><Roll>Contact</Roll> <ArrowUpRight size={14} /></a>
             </div>
           </div>
-        </header>
+          <motion.span className="exec-progress" style={{ scaleX: progress }} aria-hidden="true" />
+        </motion.header>
         <main className="exec-content" id="executive-main">
           <HeroSection />
+          <TechMarquee />
           <WorkSection />
           <CertificatesSection />
           <ExperienceSection />

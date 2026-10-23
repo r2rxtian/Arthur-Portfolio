@@ -1,15 +1,20 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, Award, Check, ChevronDown, Copy } from 'lucide-react';
+import { ArrowUpRight, Award, Check, Copy } from 'lucide-react';
 import { certificatesData } from '../../data/certificates';
 import type { Certificate } from '../../types/portfolio';
 import { ScrollReveal } from './ScrollReveal';
+import { Section } from './Section';
+import { Disclosure } from './motion';
+import { EASE_OUT, useSpotlight } from './motionUtils';
 
 type FilterCategory = 'All' | Certificate['category'];
-const categories: FilterCategory[] = ['All', 'Cloud & Architecture', 'DevOps & Containers', 'Full-Stack & Frontend', 'Security & Data'];
+const categories: FilterCategory[] = ['All', ...new Set(certificatesData.map((cert) => cert.category))];
 
 export function CertificatesSection() {
   const reducedMotion = useReducedMotion();
+  // One callback ref serves every card; React registers and cleans up each element separately.
+  const spotlight = useSpotlight<HTMLElement>(90);
   const [activeFilter, setActiveFilter] = useState<FilterCategory>('All');
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copyError, setCopyError] = useState(false);
@@ -31,11 +36,8 @@ export function CertificatesSection() {
   }
 
   return (
-    <section className="exec-section" id="certificates" aria-labelledby="certificates-heading">
-      <ScrollReveal className="exec-section-header">
-        <h2 id="certificates-heading">Always learning<span>.</span></h2>
-        <p>Credentials across cloud architecture, development, and infrastructure.</p>
-      </ScrollReveal>
+    <Section id="certificates" index="02" eyebrow="Credentials" title="Always learning"
+      intro="Learning in responsive web development and networking.">
       <ScrollReveal>
         <div className="cert-filter-bar" role="group" aria-label="Filter certifications">
           {categories.map((category) => (
@@ -49,41 +51,41 @@ export function CertificatesSection() {
         </div>
       </ScrollReveal>
       <div className="cert-grid" aria-live="polite">
-        <AnimatePresence mode="popLayout" initial={false}>
-          {filtered.map((cert) => (
-            <motion.article key={cert.id} layout={reducedMotion ? false : 'position'} className="cert-card"
-              initial={reducedMotion ? false : { opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
-              transition={{ type: 'spring', stiffness: 160, damping: 28, opacity: { duration: reducedMotion ? 0 : 0.2 } }}>
-              <div className="cert-issuer-mark"><Award size={22} strokeWidth={1.5} /></div>
+        <AnimatePresence mode="popLayout">
+          {filtered.map((cert, index) => (
+            <motion.article key={cert.id} layout={reducedMotion ? false : 'position'} className="cert-card" ref={spotlight}
+              initial={reducedMotion ? false : { opacity: 0, y: 16, filter: 'blur(4px)' }}
+              whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)', transitionEnd: { filter: 'none' } }} viewport={{ once: true, margin: '0px 0px -8% 0px' }}
+              exit={{ opacity: 0, scale: 0.98 }}
+              transition={reducedMotion ? { duration: 0 } : { duration: 0.7, ease: EASE_OUT, delay: (index % 2) * 0.08, layout: { type: 'spring', stiffness: 260, damping: 32 } }}>
+              <div className="cert-issuer-mark"><Award size={22} strokeWidth={1.5} /><span>{cert.issuerCode}</span></div>
               <div className="cert-card-content">
-                <p className="cert-issuer-name">{cert.issuerCode === 'HASHICORP' ? 'HashiCorp' : cert.issuerCode}</p>
+                <p className="cert-issuer-name">{cert.issuer} <i>·</i> {cert.category}</p>
                 <h3>{cert.title.replaceAll('—', '-').replaceAll('–', '-')}</h3>
-                <p className="cert-validity">{cert.expiryDate.replace('Active · ', '')}</p>
-                <details className="exec-disclosure">
-                  <summary>Credential details <ChevronDown size={15} /></summary>
-                  <div className="exec-disclosure-body">
+                <p className="cert-validity">Issued {cert.issueDate}</p>
+                <Disclosure label="Credential details">
+                  <>
                     <p>{cert.summary}</p>
                     <p className="exec-caption">Issued {cert.issueDate}</p>
-                    <div className="cert-credential-id">
+                    {cert.credentialId && <div className="cert-credential-id">
                       <code>{cert.credentialId}</code>
-                      <button className="exec-icon-button" onClick={() => void copyCredential(cert.credentialId)}
+                      <button className="exec-icon-button" onClick={() => { if (cert.credentialId) void copyCredential(cert.credentialId); }}
                         aria-label={`Copy credential ID ${cert.credentialId}`}>
                         {copiedId === cert.credentialId ? <Check size={15} /> : <Copy size={15} />}
                       </button>
-                    </div>
+                    </div>}
                     <p>{cert.skills.join(', ')}</p>
-                    <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer" className="exec-text-link">
-                      Issuer website <ArrowUpRight size={15} />
-                    </a>
-                  </div>
-                </details>
+                    {cert.credentialUrl && <a href={cert.credentialUrl} target="_blank" rel="noopener noreferrer" className="exec-text-link">
+                      Verify credential <ArrowUpRight size={15} />
+                    </a>}
+                  </>
+                </Disclosure>
               </div>
             </motion.article>
           ))}
         </AnimatePresence>
       </div>
       <p className="exec-feedback" role="status">{copyError ? 'Copy unavailable. You can select and copy the credential ID above.' : copiedId ? 'Credential ID copied.' : ''}</p>
-    </section>
+    </Section>
   );
 }

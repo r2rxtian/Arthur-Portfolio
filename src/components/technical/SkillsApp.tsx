@@ -18,12 +18,12 @@ export function SkillsApp() {
                 (index + (event.key === 'ArrowRight' ? 1 : -1) + skillCategoriesData.length) % skillCategoriesData.length;
               setActiveId(skillCategoriesData[next].id);
               document.getElementById(`skill-tab-${skillCategoriesData[next].id}`)?.focus();
-            }}>{category.id === 'frontend' ? 'Frontend' : category.id === 'backend' ? 'Backend' : category.id === 'devops' ? 'Cloud & DevOps' : 'Practices'}</button>
+            }}>{category.id === 'frontend' ? 'Web' : category.id === 'backend' ? 'Programming & SQL' : 'IT & Languages'}</button>
         ))}
       </div>
       <div id="skill-panel" className="inspector-panel" role="tabpanel" aria-labelledby={`skill-tab-${activeId}`} tabIndex={0}>
         <h2>{activeCategory.title}</h2><p>{activeCategory.subtitle}</p>
-        <dl className="inspector-skills">{activeCategory.items.map((item) => <div key={item.name}><dt>{item.name}</dt><dd>{item.level}</dd></div>)}</dl>
+        <dl className="inspector-skills">{activeCategory.items.map((item) => <div key={item.name}><dt>{item.name}</dt><dd>{item.category}</dd></div>)}</dl>
       </div>
       <div className="os-status-bar"><span>{activeCategory.items.length} capabilities</span><span>{activeCategory.title}</span></div>
     </div>

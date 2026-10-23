@@ -1,5 +1,7 @@
 import type { VirtualFile } from '../types/os';
 import { projectsData } from './projects';
+import { profileData } from './profile';
+import { buildResumeText } from './resume';
 
 export const virtualFileSystem: VirtualFile[] = [
   {
@@ -8,11 +10,11 @@ export const virtualFileSystem: VirtualFile[] = [
     path: '/README.md',
     type: 'file',
     language: 'markdown',
-    content: `# Arthur Christian — Full-Stack Software Engineer
+    content: `# ${profileData.name} - ${profileData.title}
 > Dual-mode engineering portfolio. Built with TypeScript, React 19, and Vite.
 
 ## Overview
-- **Specialization**: Full-stack web development, scalable systems, AI integration, automation, and cloud technologies.
+- **About**: ${profileData.executivePitch}
 - **Philosophy**: Turning ideas into functional digital experiences through practical, scalable solutions.
 - **Modes**:
   - **ArthurOS**: An engineering workbench with connected project overviews, architecture diagrams, source excerpts, a terminal, and a playroom.
@@ -100,36 +102,11 @@ ${project.technical.codeSnippet.code}
     children: [
       {
         id: 'file-cv',
-        name: 'Arthur_Christian_CV.txt',
-        path: '/resume/Arthur_Christian_CV.txt',
+        name: profileData.contact.resumeFileName,
+        path: `/resume/${profileData.contact.resumeFileName}`,
         type: 'file',
         language: 'text',
-        content: `=====================================================
-ARTHUR CHRISTIAN - FULL-STACK SOFTWARE ENGINEER
-Email: arthur.engineer@example.com | GitHub: github.com/r2rxtian
-Location: Remote / Global | Status: Available for Software Engineering Roles
-=====================================================
-
-ABOUT:
-BS Computer Science graduate passionate about designing and developing practical, scalable solutions — combining full-stack development, AI integration, automation, cloud technologies, and user-focused system design.
-
-CORE COMPETENCIES:
-- Full-Stack Web Development, REST APIs, Microservices, Cloud Technologies
-- TypeScript, JavaScript, React 19, Node.js, Express, PHP 8.2
-- Microsoft SQL Server, PostgreSQL, Redis, Database Optimization
-- Automation, AI Integration, Docker, CI/CD, System Design
-
-PROJECTS & WORK:
-- StockHub Inventory Management System (ITMS) - Full-Stack TypeScript & MSSQL
-- Lost & Found Management System - Full-Stack Express, MSSQL & Matching Engine
-- Tennis Academy LMS - Full-Stack Learning Management Platform
-- DocHubPR - Secure Document Lifecycle Management Hub
-- QR Task Check (QRS) - Field Operations & Verification Platform
-- Senior Full-Stack Engineer @ Veloce Data Systems (2021 - 2023)
-  * Engineered 120k tick/sec WebSocket telemetry stream for fintech trading desks.
-- Software Engineer @ Synthetix Interactive (2019 - 2021)
-  * Designed reusable component design system adopted across 12 product lines.
-`,
+        content: buildResumeText(),
       },
     ],
   },

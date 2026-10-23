@@ -2,6 +2,63 @@ import type { Project } from '../types/portfolio';
 
 export const projectsData: Project[] = [
   {
+    id: 'pricelistautomation',
+    title: 'LRN Price List Automation',
+    tagline: 'From Excel upload to reviewed price changes and approved exports',
+    category: 'Full-Stack',
+    featured: true,
+    thumbnailGradient: 'linear-gradient(135deg, #315f48 0%, #719c84 100%)',
+    executive: {
+      businessChallenge: 'Managing price lists across customers and price levels calls for a consistent way to validate workbooks, adjust product prices, review changes, and retain a record of published revisions.',
+      strategicSolution: 'Built a PHP and JavaScript workflow that validates Excel uploads, applies category and customer price adjustments, routes saved changes for approval, and exports eligible lists to Excel or PDF with an audit trail.',
+      quantifiableImpact: [
+        'Connects workbook import, price editing, approval, and export in one application.',
+        'Supports six configured price levels and customer-specific prices.',
+        'Enforces export permissions and approval status on the server, while recording export activity.',
+      ],
+      role: 'System Developer',
+    },
+    technical: {
+      architecture: 'PHP 8.2 pages and JSON endpoints serve a vanilla JavaScript interface. SQL Server provides company sign-in and supports application storage through a repository layer with SQL Server and JSON drivers. SheetJS and jsPDF generate workbook and PDF exports.',
+      techStack: ['PHP 8.2', 'JavaScript', 'SQL Server', 'SheetJS', 'jsPDF', 'HTML', 'CSS', 'GSAP'],
+      keyFeatures: [
+        'Server-side validation of the original Excel workbook against a shared template contract before import.',
+        'Category, price-level, and customer adjustments calculated from uploaded prices to avoid compounding.',
+        'Approval routing, rejection remarks, revision history, notifications, and audit logging.',
+        'Excel and PDF exports with product photos and configurable letterheads and bank details.',
+        'Role permissions, session authentication, CSRF protection, and server-enforced export eligibility.',
+      ],
+      codeSnippet: {
+        filename: 'api/versions/export.php',
+        language: 'php',
+        code: `<?php
+declare(strict_types=1);
+/** Checks an export is allowed (uploaded files and approved changes only), logs it, and returns the rows. */
+require_once __DIR__ . '/../bootstrap.php';
+
+$user = apiUser();
+requirePost();
+csrfVerify();
+requirePermission($user, 'export', 'Your role cannot export price lists.');
+
+$data = request_json();
+$format = in_array($data['format'] ?? '', ['excel', 'pdf'], true) ? $data['format'] : null;
+if (!$format) json_response(['ok' => false, 'message' => 'Choose Excel or PDF.'], 422);
+$version = find_open_version($user, clean_text($data['id'] ?? '', 32));
+if (!is_exportable($version)) {
+    json_response(['ok' => false, 'message' => 'Only uploaded files and approved price changes can be exported.'], 403);
+}
+$scope = clean_text($data['scope'] ?? '', 200);
+record_audit('export_' . $format, "Exported '{$version['name']}' to " . ($format === 'pdf' ? 'PDF' : 'Excel'),
+    "{$user['name']} exported " . version_label($version) . ($scope !== '' ? " ({$scope})" : '') . '.', [
+        'versionId' => $version['id'], 'versionName' => $version['name'], 'fileName' => $version['name'], 'format' => $format, 'scope' => $scope,
+    ]);
+json_response(['ok' => true, 'version' => $version]);`,
+      },
+    },
+    links: { github: 'https://github.com/r2rxtian/pricelistautomation' },
+  },
+  {
     id: 'itms',
     title: 'StockHub Inventory Management System (ITMS)',
     tagline: 'Audited warehouse inventory platform with serializable transactions & real-time stock movement tracking',
