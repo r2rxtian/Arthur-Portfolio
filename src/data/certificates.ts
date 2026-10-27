@@ -2,6 +2,20 @@ import type { Certificate } from '../types/portfolio';
 
 export const certificatesData: Certificate[] = [
   {
+    id: 'freecodecamp-front-end-development-libraries',
+    title: 'Front-End Development Libraries',
+    issuer: 'freeCodeCamp',
+    issuerCode: 'FCC',
+    issueDate: 'October 24, 2026',
+    credentialUrl: 'https://www.freecodecamp.org/certification/xtian06/front-end-development-libraries-v9',
+    category: 'Web Development',
+    summary: 'Developer certification awarded to xtian06 for completing Front-End Development Libraries, representing approximately 300 hours of work.',
+    skills: ['React', 'Redux', 'Bootstrap', 'jQuery', 'Sass'],
+    gradient: 'linear-gradient(90deg, #0a0a23 0%, #3b3b4f 100%)',
+    accentColor: '#0a0a23',
+    badgeLabel: 'DEVELOPER CERTIFICATION',
+  },
+  {
     id: 'freecodecamp-responsive-web-design',
     title: 'Responsive Web Design',
     issuer: 'freeCodeCamp',
