@@ -6,15 +6,15 @@ export const profileData: Profile = {
   name: 'Arthur Christian Mendoza David',
   shortName: 'Arthur Christian',
   handle: 'r2rxtian',
-  title: 'Intern System Developer',
+  title: 'System Developer',
   executivePitch:
-    'Computer Science student at Holy Angel University and Intern System Developer at La Rose Noire Philippines, building practical software and developing skills in problem-solving, automation, and system improvement.',
+    'System Developer and Computer Science student at Holy Angel University who completed on-the-job training at La Rose Noire Philippines, building practical software focused on problem-solving, automation, and system improvement.',
   technicalPitch:
-    'I build web applications and automation tools with JavaScript, TypeScript, PHP, Python, and SQL. As an Intern System Developer at La Rose Noire Philippines, I am gaining professional experience while completing my BS in Computer Science at Holy Angel University.',
+    'I build web applications and automation tools with JavaScript, TypeScript, PHP, Python, and SQL. I completed my on-the-job training as a system developer at La Rose Noire Philippines and am finishing my BS in Computer Science at Holy Angel University.',
   status: 'Open to software development opportunities',
-  availability: 'Currently an Intern System Developer',
+  availability: 'Available for software development roles',
   location: 'Magalang, Pampanga, Philippines',
-  yearsOfExperience: 'Internship since July 2026',
+  yearsOfExperience: 'OJT completed July - October 2026',
   education: {
     institution: 'Holy Angel University (HAU)',
     degree: 'Bachelor of Science in Computer Science',
@@ -25,7 +25,7 @@ export const profileData: Profile = {
   metrics: [
     { label: 'Portfolio projects', value: String(projectsData.length), subtext: 'Web applications and automation' },
     { label: 'Certifications', value: String(certificatesData.length), subtext: 'Web development and networking' },
-    { label: 'Internship started', value: 'Jul 2026', subtext: 'La Rose Noire Philippines' },
+    { label: 'OJT completed', value: 'Oct 2026', subtext: 'La Rose Noire Philippines' },
     { label: 'Graduation', value: 'Nov 2026', subtext: 'Holy Angel University' },
   ],
   contact: {
