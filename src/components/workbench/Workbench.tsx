@@ -6,7 +6,7 @@ import { profileData } from '../../data/profile';
 import { useOS } from '../../context/OSContext';
 import { useMode } from '../../context/ModeContext';
 import type { WindowId } from '../../types/os';
-import profileImage from '../../assets/profile.png';
+import profileImage from '../../assets/profile.jpg';
 import { ProjectWorkspace, type ProjectLens } from './ProjectWorkspace';
 import { ProjectInspector } from './ProjectInspector';
 import { CommandPalette } from './CommandPalette';

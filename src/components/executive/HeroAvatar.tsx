@@ -1,6 +1,6 @@
 ﻿import { useEffect, useRef } from 'react';
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion';
-import profileImg from '../../assets/profile.png';
+import profileImg from '../../assets/profile.jpg';
 import { profileData } from '../../data/profile';
 import { EASE_OUT } from './motionUtils';
 import { subscribePointer } from './pointer';

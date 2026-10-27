@@ -5,7 +5,7 @@ import { useOS } from '../../context/OSContext';
 import { useMode } from '../../context/ModeContext';
 import type { WindowId } from '../../types/os';
 import { profileData } from '../../data/profile';
-import profileImg from '../../assets/profile.png';
+import profileImg from '../../assets/profile.jpg';
 
 const apps = [
   { id: 'projects', label: 'My Projects', subtitle: 'Browse the work', icon: FolderGit2 },

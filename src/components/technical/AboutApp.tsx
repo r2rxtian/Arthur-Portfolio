@@ -3,7 +3,7 @@ import { profileData } from '../../data/profile';
 import { projectsData } from '../../data/projects';
 import { skillCategoriesData } from '../../data/skills';
 import { certificatesData } from '../../data/certificates';
-import profileImg from '../../assets/profile.png';
+import profileImg from '../../assets/profile.jpg';
 
 export function AboutApp() {
   return (
